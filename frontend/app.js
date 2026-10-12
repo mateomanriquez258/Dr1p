@@ -11,7 +11,7 @@ const fmt = n => n.toLocaleString("es-AR");
 function filtrar(cat) {
   filtroActual = cat;
   mostrarProductos();
-  const titulos = { todos: "Catálogo completo", remeras: "Remeras", pantalones: "Pantalones", gorras: "Gorras" };
+  const titulos = { todos: "[ CATÁLOGO // TODOS ]", remeras: "[ CATÁLOGO // REMERAS ]", pantalones: "[ CATÁLOGO // PANTALONES ]", gorras: "[ CATÁLOGO // GORRAS ]" };
   document.getElementById("titulo-categoria").textContent = titulos[cat] || "Productos";
   document.querySelectorAll(".filters button").forEach(b => {
     b.classList.toggle("active", b.textContent.toLowerCase().includes(cat));
@@ -41,7 +41,7 @@ function mostrarProductos() {
         <h3>${p.nombre}</h3>
         <span class="price">$${fmt(p.precio)},00</span>
         <span class="stock">¡Solo quedan ${p.stock} en stock!</span>
-        <button onclick="agregar(${p.id})">Comprar</button>
+        <button onclick="agregar(${p.id})">CONSEGUIR DR1P</button>
       </div>
     </div>`).join("") || "Sin productos en esta categoría";
 }
@@ -266,7 +266,7 @@ function init() {
     mostrarCarrito();
     if (typeof window.filtrar === "function") window.filtrar(filtroActual);
     if (window.Router) {
-      const t = { todos: "Catálogo completo", remeras: "Remeras", pantalones: "Pantalones", gorras: "Gorras" };
+      const t = { todos: "[ CATÁLOGO // TODOS ]", remeras: "[ CATÁLOGO // REMERAS ]", pantalones: "[ CATÁLOGO // PANTALONES ]", gorras: "[ CATÁLOGO // GORRAS ]" };
       document.getElementById("titulo-categoria").textContent = t[filtroActual];
       document.querySelectorAll("[data-cat]").forEach(a =>
         a.classList.toggle("active", a.getAttribute("data-cat") === filtroActual));

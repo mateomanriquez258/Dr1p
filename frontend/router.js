@@ -11,7 +11,7 @@
   "use strict";
 
   var VALIDAS = ["todos", "remeras", "pantalones", "gorras"];
-  var TITULOS = { todos: "Catálogo completo", remeras: "Remeras", pantalones: "Pantalones", gorras: "Gorras" };
+  var TITULOS = { todos: "[ CATÁLOGO // TODOS ]", remeras: "[ CATÁLOGO // REMERAS ]", pantalones: "[ CATÁLOGO // PANTALONES ]", gorras: "[ CATÁLOGO // GORRAS ]" };
 
   function rutaActual() {
     try {
