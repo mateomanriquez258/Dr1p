@@ -1,0 +1,11 @@
+{
+  "name": "dr1p-store",
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node backend/server.js"
+  }
+}

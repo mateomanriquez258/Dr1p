@@ -1,0 +1,13 @@
+# Render Blueprint — deploy con 1 click
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: dr1p-store
+    runtime: node
+    plan: free
+    buildCommand: npm install || true
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: 22

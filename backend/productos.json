@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "nombre": "Remera Chrome_Heart (M-XL)",
+    "precio": 30000,
+    "stock": 5,
+    "categoria": "remeras",
+    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/whatsapp-image-2026-10-09-at-i-7e5d6d113d0424347a17915842039544-480-0.webp",
+    "precio_base": 25000
+  },
+  {
+    "id": 2,
+    "nombre": "Remera Bathing_Ape (M-XL)",
+    "precio": 30000,
+    "stock": 5,
+    "categoria": "remeras",
+    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/whatsapp-image-2026-10-09-at-d-328c0c84a68ab61e6917915839312926-480-0.webp",
+    "precio_base": 25000
+  },
+  {
+    "id": 3,
+    "nombre": "Remera Corteiz boxyfit (M-XL)",
+    "precio": 30000,
+    "stock": 5,
+    "categoria": "remeras",
+    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/1-0aa249cf7b95e630fe17915838557121-480-0.webp",
+    "precio_base": 25000
+  },
+  {
+    "id": 4,
+    "nombre": "Remera Vans blanca (M-XL)",
+    "precio": 30000,
+    "stock": 10,
+    "categoria": "remeras",
+    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/whatsapp-image-2026-10-09-at-18-35-08-5f7d25a625cce67ec417915826303186-480-0.webp",
+    "precio_base": 25000
+  },
+  {
+    "id": 5,
+    "nombre": "Remera Vans negra (M-XL)",
+    "precio": 30000,
+    "stock": 10,
+    "categoria": "remeras",
+    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/whatsapp-image-2026-10-09-at-18-35-08er-3621b3a44e03258ab717915823805443-480-0.webp",
+    "precio_base": 25000
+  },
+  {
+    "id": 6,
+    "nombre": "Pantalón Short Jordan Blanco (M-XL)",
+    "precio": 33588,
+    "stock": 5,
+    "categoria": "pantalones",
+    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/jordan-grid-5f4bf8b2d30c10edc117915847102237-480-0.webp",
+    "precio_base": 27990
+  },
+  {
+    "id": 7,
+    "nombre": "Pantalón Short Jordan Negro (M-XL)",
+    "precio": 33588,
+    "stock": 5,
+    "categoria": "pantalones",
+    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/whatsapp-image-2026-jordan-nefgro-810c7608b00c698f8617915845874943-480-0.webp",
+    "precio_base": 27990
+  },
+  {
+    "id": 8,
+    "nombre": "Pantalón Short Jordan Negro V2 (M-XL)",
+    "precio": 33588,
+    "stock": 5,
+    "categoria": "pantalones",
+    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/jordan-negro-3e6f71218c58c4701d17915844754546-480-0.webp",
+    "precio_base": 27990
+  },
+  {
+    "id": 9,
+    "nombre": "Pantalón Corto Baggy Negro (M-XL)",
+    "precio": 27600,
+    "stock": 8,
+    "categoria": "pantalones",
+    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/whatsapp-image-2026-10-09-at-18-35-09d-7d55b95525646faed717915830770543-480-0.webp",
+    "precio_base": 23000
+  },
+  {
+    "id": 10,
+    "nombre": "Pantalón Corto Baggy Blanco (M-XL)",
+    "precio": 27600,
+    "stock": 8,
+    "categoria": "pantalones",
+    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/whatsapp-image-2026-10-09-at-18-35-09g-2bd7603518647a340f17915828855245-480-0.webp",
+    "precio_base": 23000
+  },
+  {
+    "id": 11,
+    "nombre": "Gorra New Era Beige (7 3/8)",
+    "precio": 54000,
+    "stock": 2,
+    "categoria": "gorras",
+    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/whatsapp-image-2026-10-09-at-18-39-50-a2e2bc3ec8b0da858d17915836905427-480-0.webp",
+    "precio_base": 45000
+  },
+  {
+    "id": 12,
+    "nombre": "Gorra New Era Beige V2 (7 3/8)",
+    "precio": 54000,
+    "stock": 2,
+    "categoria": "gorras",
+    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/whatsapp-image-2026-10-09-at-18-39-53-5550a22ff8fee6fe1217915831649140-480-0.webp",
+    "precio_base": 45000
+  }
+]

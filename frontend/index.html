@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DR1P STORE — Streetwear</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="preloader.css">
+<link rel="stylesheet" href="spinwheel.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css?family=Zalando+Sans+Expanded:400,700|Zalando+Sans:400,700|Space+Mono:400,700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ===== PRELOADER DR1P (decodificador → marca) ===== -->
+<div id="preloader" class="preloader" aria-hidden="true">
+  <div id="pre-slot" class="slot-brand"></div>
+  <div class="pre-bar"><i id="pre-fill"></i></div>
+  <p class="pre-hint">INICIANDO DR1P…</p>
+</div>
+
+<!-- ===== HEADER (zona negra) ===== -->
+<header class="nav">
+  <div class="nav-inner">
+    <!-- Header Logo -->
+    <a href="/" class="logo-link" onclick="Router.home();return false;">
+      <img src="assets/logo.png" alt="DR1P" class="header-logo" />
+    </a>
+    <nav class="nav-links">
+      <a href="#" data-cat="todos" onclick="Router.inicio();return false;">INICIO</a>
+      <a href="?cat=remeras" data-cat="remeras" onclick="Router.ir('remeras');return false;">REMERAS</a>
+      <a href="?cat=pantalones" data-cat="pantalones" onclick="Router.ir('pantalones');return false;">PANTALONES</a>
+      <a href="?cat=gorras" data-cat="gorras" onclick="Router.ir('gorras');return false;">GORRAS</a>
+      <a href="#drop">DROP</a>
+      <a href="#contacto">CONTACTO</a>
+    </nav>
+    <div class="nav-tools">
+      <input id="nav-search" type="search" placeholder="BUSCAR…" aria-label="Buscar">
+      <button class="cart-btn" onclick="toggleCart()">🛒 <span id="count">0</span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ===== HERO + MARQUEE (negro) ===== -->
+  <section class="hero">
+    <img class="hero-bg" src="https://dcdn-us.mitiendanube.com/stores/008/356/664/media/377a1105-3e14f6b4-9ba6-40a6-ad37-acd5081586c5/source.png" alt="" onerror="this.style.display='none'">
+    <div class="hero-content">
+      <p class="kicker">SS26 — STOCK LIMITADO · M–XL</p>
+      <h1>VESTÍ<br>EL DROP.</h1>
+      <a href="#catalogo" class="btn-light" onclick="Router.catalogo();return false;">VER CATÁLOGO</a>
+    </div>
+  </section>
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>ENVÍOS A TODO EL PAÍS · TODOS LOS MEDIOS DE PAGO · DROPS EXCLUSIVOS · STOCK LIMITADO ·&nbsp;</span>
+      <span>ENVÍOS A TODO EL PAÍS · TODOS LOS MEDIOS DE PAGO · DROPS EXCLUSIVOS · STOCK LIMITADO ·&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- El gradiente inicia ESTRICTAMENTE debajo de la marquesina -->
+  <div class="page-grad">
+
+  <!-- ===== [01] CATEGORÍAS (gris oscuro) ===== -->
+  <section id="categorias" class="section zone-dark">
+    <p class="idx">[01] — CATEGORÍAS</p>
+    <div class="cat-grid">
+      <a class="cat-card" href="?cat=remeras" onclick="Router.ir('remeras');return false;"><span class="cat-n">01</span><h2>REMERAS</h2><p>BOXYFIT / OVERSIZE →</p></a>
+      <a class="cat-card" href="?cat=pantalones" onclick="Router.ir('pantalones');return false;"><span class="cat-n">02</span><h2>PANTALONES</h2><p>BAGGY / SHORT →</p></a>
+      <a class="cat-card" href="?cat=gorras" onclick="Router.ir('gorras');return false;"><span class="cat-n">03</span><h2>GORRAS</h2><p>NEW ERA FITTED →</p></a>
+    </div>
+  </section>
+
+  <!-- ===== [02] CATÁLOGO (gris medio) ===== -->
+  <section id="catalogo" class="section zone-mid">
+    <div class="section-head">
+      <div>
+        <p class="idx">[02] — CATÁLOGO</p>
+        <h2 id="titulo-categoria">Catálogo completo</h2>
+      </div>
+      <div class="filters">
+        <button onclick="Router.ir('todos')">Todos</button>
+        <button onclick="Router.ir('remeras')">Remeras</button>
+        <button onclick="Router.ir('pantalones')">Pantalones</button>
+        <button onclick="Router.ir('gorras')">Gorras</button>
+      </div>
+    </div>
+    <div id="productos" class="grid"></div>
+  </section>
+
+  <!-- ===== [03] PRÓXIMO DROP (gris medio→claro) ===== -->
+  <section id="drop" class="section zone-mid drop">
+    <p class="idx">[03] — PRÓXIMO DROP</p>
+    <h2 class="drop-title">DROP 003 — ACCESO ANTICIPADO</h2>
+    <div class="count" role="timer" aria-label="Cuenta regresiva">
+      <div><span id="cd-d">00</span><small>DÍAS</small></div>
+      <div><span id="cd-h">00</span><small>HS</small></div>
+      <div><span id="cd-m">00</span><small>MIN</small></div>
+      <div><span id="cd-s">00</span><small>SEG</small></div>
+    </div>
+    <form id="drop-form" class="drop-form">
+      <input id="drop-email" type="email" placeholder="tu@email.com" required>
+      <button type="submit">AVISAME</button>
+    </form>
+    <p id="drop-ok" class="drop-ok" hidden>✓ ANOTADO. TE AVISAMOS ANTES QUE A TODOS.</p>
+  </section>
+
+  <!-- ===== [04] SHOWROOM + CONTACTO (gris claro) ===== -->
+  <section id="showroom" class="section zone-light">
+    <p class="idx">[04] — SHOWROOM</p>
+    <div class="show-card">
+      <div>
+        <h2>VENÍ AL SHOWROOM</h2>
+        <p>CIPOLLETTI · RÍO NEGRO<br>PROBATE TODO ANTES DE COMPRAR.</p>
+      </div>
+      <a class="btn-dark" href="https://wa.me/5492993244379?text=Hola%20DR1P%2C%20quiero%20coordinar%20visita%20al%20showroom" target="_blank">HABLAR POR WHATSAPP</a>
+    </div>
+  </section>
+
+  <section id="contacto" class="section zone-light">
+    <p class="idx">[05] — CONTACTO</p>
+    <div class="contacto-grid">
+      <div class="contacto-info">
+        <p>📲 <a href="https://wa.me/5492993244379" target="_blank">5492993244379</a></p>
+        <p>📞 <a href="tel:2993244379">2993244379</a></p>
+        <p>✉️ <a href="mailto:dr1p.contacto.arg@gmail.com">dr1p.contacto.arg@gmail.com</a></p>
+        <p>📸 <a href="https://www.instagram.com/dr1p.tm?srtk=NWdqM2lseDJzbXdr" target="_blank">@dr1p.tm</a></p>
+      </div>
+      <form class="contacto-form" onsubmit="enviarContacto(event)">
+        <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off">
+        <input id="c-nombre" placeholder="Nombre" required>
+        <input id="c-email" type="email" placeholder="Email" required>
+        <input id="c-tel" placeholder="Teléfono" required>
+        <textarea id="c-msg" placeholder="Mensaje" rows="4" required></textarea>
+        <button type="submit" class="btn-dark">Enviar</button>
+        <p id="c-ok" class="ok-msg" style="display:none">¡Mensaje enviado!</p>
+      </form>
+    </div>
+  </section>
+  </div><!-- /page-grad -->
+</main>
+
+<!-- ===== FOOTER (blanco) ===== -->
+<footer class="footer">
+  <div class="foot-grid">
+    <div>
+      <p class="foot-t">NAVEGACIÓN</p>
+      <a href="#" onclick="Router.inicio();return false;">Inicio</a>
+      <a href="?cat=remeras" onclick="Router.ir('remeras');return false;">Remeras</a>
+      <a href="?cat=pantalones" onclick="Router.ir('pantalones');return false;">Pantalones</a>
+      <a href="?cat=gorras" onclick="Router.ir('gorras');return false;">Gorras</a>
+    </div>
+    <div>
+      <p class="foot-t">REDES</p>
+      <a href="https://www.instagram.com/dr1p.tm?srtk=NWdqM2lseDJzbXdr" target="_blank">Instagram</a>
+      <a href="https://wa.me/5492993244379" target="_blank">WhatsApp</a>
+      <a href="mailto:dr1p.contacto.arg@gmail.com">Email</a>
+    </div>
+    <div>
+      <p class="foot-t">PAGOS</p>
+      <span>TRANSFERENCIA (−20%)</span><span>EFECTIVO</span><span>3 CUOTAS SIN INTERÉS</span>
+    </div>
+    <div>
+      <p class="foot-t">LEGAL</p>
+      <span>CAMBIOS HASTA 7 DÍAS</span><span>© 2026 DR1P STORE</span>
+    </div>
+  </div>
+  <p class="watermark">HECHA POR SANTIAGO GARRIDO</p>
+</footer>
+<div class="watermark-float">Hecha por Santiago Garrido</div>
+
+<!-- ===== CARRITO ===== -->
+<aside id="cart-drawer" class="cart-drawer">
+  <div class="cart-head">
+    <h3>Carrito de compras</h3>
+    <button onclick="toggleCart()">✕</button>
+  </div>
+  <div id="carrito" class="cart-items"></div>
+  <div class="cart-foot">
+    <p>Subtotal: $<span id="total">0</span></p>
+    <div class="coupon-row">
+      <input id="cupon" placeholder="Cupón (ej: DR1P-20OFF-XXXX)">
+      <button onclick="aplicarCupon()">Aplicar</button>
+    </div>
+    <p id="cupon-msg" class="ok-msg" style="display:none"></p>
+    <p id="descuento-line" style="display:none">Descuento: -$<span id="descuento">0</span></p>
+    <p><strong>Total: $<span id="total-final">0</span></strong></p>
+    <p class="ok-msg">Coordinamos el envío por WhatsApp</p>
+    <input id="nombre" placeholder="Tu nombre">
+    <button class="btn-wsp" onclick="enviarWhatsApp()">Finalizar por WhatsApp</button>
+    <button class="btn-link" onclick="toggleCart()">Ver más productos</button>
+  </div>
+</aside>
+<div id="overlay" class="overlay" onclick="toggleCart()"></div>
+
+<script src="app.js"></script>
+<script src="router.js"></script>
+<script src="preloader.js"></script>
+<script src="spinwheel.js"></script>
+
+<!-- ===== Modal Spin-to-Win ===== -->
+<div id="spin-overlay" class="spin-overlay" role="dialog" aria-modal="true" aria-labelledby="spin-title">
+  <section class="spin-modal">
+    <button id="spin-close" class="spin-close" aria-label="Cerrar">✕</button>
+    <h2 id="spin-title">¡Girá y ganá!</h2>
+    <p id="spin-sub" class="spin-sub">Dejanos tu email y ganá 20% OFF o $5.000 de regalo.</p>
+    <div id="spin-stage" class="spin-stage">
+      <div class="spin-pointer">🔻</div>
+      <div id="spin-wheel" class="spin-wheel"><div id="spin-labels"></div></div>
+      <div class="spin-hub">DR1P</div>
+    </div>
+    <div id="spin-form-box">
+      <form class="spin-form" action="https://formspree.io/f/xaeqdvol" method="POST" onsubmit="return false;">
+        <input id="spin-email" name="email" type="email" placeholder="tu@email.com" autocomplete="email">
+        <span id="spin-error" class="spin-error"></span>
+        <button id="btn-spin" type="button" class="spin-btn" disabled>Girar la ruleta</button>
+        <small class="spin-small">Al girar aceptás suscribirte al newsletter de Dr1p.tm.</small>
+      </form>
+    </div>
+    <div id="spin-win" class="spin-win">
+      <div id="win-prize" class="spin-prize"></div>
+      <div id="win-coupon" class="spin-coupon"></div>
+      <p id="win-info" class="spin-small"></p>
+      <button id="btn-copy" class="spin-btn">Copiar mi cupón</button>
+      <button id="btn-win-close" class="btn-link">Seguir comprando</button>
+    </div>
+  </section>
+</div>
+</body>
+</html>

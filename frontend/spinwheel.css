@@ -1,0 +1,96 @@
+/* ===== Spin-to-Win Modal (mobile-first) ===== */
+.spin-overlay {
+  position: fixed; inset: 0; z-index: 300; /* sobre el preloader (200) */
+  background: rgba(0,0,0,.75);
+  display: none; align-items: center; justify-content: center;
+  padding: 16px;
+}
+.spin-overlay.show { display: flex; }
+
+.spin-modal {
+  position: relative;
+  width: 100%; max-width: 420px;
+  background: #0a0a0a; color: #E0FFFF;
+  border: 1px solid #333; border-radius: 12px;
+  padding: 24px 20px; text-align: center;
+  animation: spin-pop .3s ease;
+}
+@keyframes spin-pop {
+  from { transform: scale(.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.spin-close {
+  position: absolute; top: 8px; right: 12px;
+  background: transparent; border: 0; color: #fff;
+  font-size: 22px; cursor: pointer;
+}
+.spin-modal h2 { font-family: "Zalando Sans Expanded", sans-serif; margin: 0 0 6px; font-size: 22px; }
+.spin-sub { color: #9aa5a5; font-size: 14px; margin: 0 0 16px; }
+
+/* Ruleta */
+.spin-stage { position: relative; width: 260px; height: 260px; margin: 0 auto 12px; }
+.spin-pointer {
+  position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+  font-size: 28px; z-index: 2; filter: drop-shadow(0 2px 2px #000);
+}
+.spin-wheel {
+  width: 100%; height: 100%; border-radius: 50%;
+  border: 6px solid #fff;
+  position: relative; overflow: hidden;
+  /* 6 segmentos: A(20% OFF, verde contraste) | C(pierde, gris) | B($5000, ROJO) */
+  background: conic-gradient(
+    #25D366 0deg 60deg,
+    #2b2b2b 60deg 120deg,
+    #D62828 120deg 180deg,
+    #2b2b2b 180deg 240deg,
+    #25D366 240deg 300deg,
+    #D62828 300deg 360deg
+  );
+  transition: transform 4.2s cubic-bezier(.12,.8,.08,1); /* desaceleración natural */
+}
+.spin-label {
+  position: absolute; left: 50%; top: 50%;
+  width: 80px; font-size: 11px; font-weight: 700; text-align: center;
+  color: #fff; text-shadow: 0 1px 2px #000;
+}
+.spin-hub {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  width: 56px; height: 56px; border-radius: 50%;
+  background: #000; color: #fff; border: 3px solid #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 12px;
+}
+
+/* Form */
+.spin-form { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.spin-form input {
+  padding: 12px; background: #000; color: #fff;
+  border: 1px solid #444; border-radius: 6px; font-size: 15px;
+}
+.spin-form input.invalid { border-color: #e74c3c; }
+.spin-error { color: #e74c3c; font-size: 13px; min-height: 18px; }
+.spin-small { font-size: 11px; color: #9aa5a5; }
+.spin-btn {
+  background: #fff; color: #000; border: 0; border-radius: 0;
+  padding: 14px; font-weight: 700; font-size: 16px; cursor: pointer;
+  text-transform: uppercase;
+}
+.spin-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Vista victoria */
+.spin-win { display: none; flex-direction: column; gap: 10px; }
+.spin-win.show { display: flex; }
+.spin-prize {
+  font-size: 26px; font-weight: 700; color: #25D366;
+  font-family: "Zalando Sans Expanded", sans-serif;
+}
+.spin-coupon {
+  background: #000; border: 2px dashed #25D366; padding: 12px;
+  font-size: 18px; letter-spacing: 2px; font-weight: 700;
+}
+.spin-win .spin-btn { background: #25D366; color: #fff; }
+
+@media (min-width: 600px) {
+  .spin-stage { width: 300px; height: 300px; }
+  .spin-modal h2 { font-size: 26px; }
+}
