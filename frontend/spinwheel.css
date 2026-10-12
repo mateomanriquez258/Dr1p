@@ -37,13 +37,13 @@
   width: 100%; height: 100%; border-radius: 50%;
   border: 6px solid #fff;
   position: relative; overflow: hidden;
-  /* 6 segmentos: A(20% OFF, verde contraste) | C(pierde, gris) | B($5000, ROJO) */
+  /* 6 segmentos: 10% verde | pierde gris | 15% dorado | pierde gris | 20% azul | $5000 ROJO */
   background: conic-gradient(
     #25D366 0deg 60deg,
     #2b2b2b 60deg 120deg,
-    #D62828 120deg 180deg,
+    #FFB703 120deg 180deg,
     #2b2b2b 180deg 240deg,
-    #25D366 240deg 300deg,
+    #49539E 240deg 300deg,
     #D62828 300deg 360deg
   );
   transition: transform 4.2s cubic-bezier(.12,.8,.08,1); /* desaceleración natural */
@@ -80,6 +80,21 @@
 /* Vista victoria */
 .spin-win { display: none; flex-direction: column; gap: 10px; }
 .spin-win.show { display: flex; }
+/* Vista cooldown 24hs */
+.spin-cool { display: none; flex-direction: column; gap: 10px; }
+.spin-cool.show { display: flex; }
+.spin-cool-msg {
+  font-family: "Space Mono", ui-monospace, monospace;
+  font-size: 15px; font-weight: 700; letter-spacing: 1px;
+  border: 1px solid #fff; padding: 14px;
+}
+/* Botón flotante para reabrir la ruleta */
+.spin-fab {
+  position: fixed; bottom: 16px; left: 12px; z-index: 60;
+  background: #fff; color: #000; border: 0; padding: 12px 18px;
+  font-weight: 700; font-size: 13px; cursor: pointer; letter-spacing: 1px;
+}
+.spin-fab:hover { background: #E5E5E5; }
 .spin-prize {
   font-size: 26px; font-weight: 700; color: #25D366;
   font-family: "Zalando Sans Expanded", sans-serif;

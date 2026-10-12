@@ -107,14 +107,24 @@ function total() {
   }, 0);
 }
 
-// Descuento según cupón de ruleta: A=20% OFF, B=$5.000 fijos (tope: subtotal)
+// Descuento según cupón de ruleta: % OFF o $5.000 fijos (tope: subtotal)
+const PCT = { "10OFF": 0.10, "15OFF": 0.15, "20OFF": 0.20, "A": 0.20 };
 function descuento() {
   if (!cuponAplicado) return 0;
   const sub = total();
-  if (cuponAplicado.premio === "A") return Math.round(sub * 0.20);
-  return Math.min(5000, sub);
+  if (cuponAplicado.premio in PCT) return Math.round(sub * PCT[cuponAplicado.premio]);
+  return Math.min(5000, sub); // "5000" / "B"
 }
 function totalFinal() { return total() - descuento(); }
+
+const CUPON_TXT = {
+  "10OFF": "✓ Cupón 10% OFF aplicado",
+  "15OFF": "✓ Cupón 15% OFF aplicado",
+  "20OFF": "✓ Cupón 20% OFF aplicado",
+  "A": "✓ Cupón 20% OFF aplicado",
+  "5000": "✓ Cupón $5.000 aplicado",
+  "B": "✓ Cupón $5.000 aplicado"
+};
 
 async function aplicarCupon() {
   const input = document.getElementById("cupon");
@@ -127,7 +137,7 @@ async function aplicarCupon() {
     if (data.ok) {
       cuponAplicado = { codigo, premio: data.premio };
       msg.style.display = "block";
-      msg.textContent = data.premio === "A" ? "✓ Cupón 20% OFF aplicado" : "✓ Cupón $5.000 aplicado";
+      msg.textContent = CUPON_TXT[data.premio] || "✓ Cupón aplicado";
     } else {
       cuponAplicado = null;
       msg.style.display = "block";
