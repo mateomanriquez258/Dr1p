@@ -106,10 +106,12 @@ const server = http.createServer(async (req, res) => {
 
   // --- API: validar cupón (estricto + un solo uso) ---
   // Solo valen cupones generados por el servidor y no quemados.
+  // Prefijos válidos: 10OFF | 15OFF | 20OFF | 5000 (+ A/B históricos).
+  var CUPON_RE = /^DR1P-(10OFF|15OFF|20OFF|5000)-[A-Z0-9]{4}$/;
   if (url.pathname === "/api/validar-cupon" && req.method === "GET") {
     const codigo = (url.searchParams.get("codigo") || "").trim().toUpperCase();
     let r = { ok: false, motivo: "invalido" };
-    if (/^DR1P-(20OFF|5000)-[A-Z0-9]{4}$/.test(codigo)) {
+    if (CUPON_RE.test(codigo)) {
       try {
         const leads = JSON.parse(await fs.readFile(LEADS_FILE, "utf-8"));
         const lead = leads.find(l => (l.cupon || "").toUpperCase() === codigo);
@@ -125,7 +127,8 @@ const server = http.createServer(async (req, res) => {
   // CONECTAR AQUÍ tu proveedor de email marketing (Mailchimp/Brevo/Klaviyo):
   // reenvía `lead` a su API dentro de este bloque además de guardarlo local.
   function generarCupon(premio, existentes) {
-    const pref = premio === "A" ? "DR1P-20OFF-" : "DR1P-5000-";
+    const PREFIJOS = { "10OFF": "DR1P-10OFF-", "15OFF": "DR1P-15OFF-", "20OFF": "DR1P-20OFF-", "A": "DR1P-20OFF-", "5000": "DR1P-5000-", "B": "DR1P-5000-" };
+    const pref = PREFIJOS[premio] || "DR1P-20OFF-";
     let cod;
     do {
       cod = pref + Math.random().toString(36).slice(2, 6).toUpperCase().padEnd(4, "X");
@@ -143,13 +146,24 @@ const server = http.createServer(async (req, res) => {
       try {
         leads = JSON.parse(await fs.readFile(LEADS_FILE, "utf-8"));
       } catch {}
-      // Mismo email → devuelve su cupón existente (no duplica)
-      const previo = leads.find(l => l.email === lead.email && l.cupon);
-      if (previo) {
-        res.writeHead(200, { "Content-Type": "application/json" });
-        return res.end(JSON.stringify({ ok: true, cupon: previo.cupon, repetido: true }));
+      const esCupon = c => CUPON_RE.test(c || "");
+      // Giros sin premio ("NONE"): se registran una vez por email, sin cupón
+      if (lead.premio === "NONE") {
+        if (!leads.some(l => l.email === lead.email)) {
+          leads.push({ email: lead.email, premio: "NONE", cupon: "-", usado: false, fecha: new Date().toISOString() });
+          await fs.writeFile(LEADS_FILE, JSON.stringify(leads, null, 2));
+        }
+        res.writeHead(201, { "Content-Type": "application/json" });
+        return res.end(JSON.stringify({ ok: true, cupon: null }));
       }
-      const cupon = generarCupon(lead.premio === "B" ? "B" : "A",
+      // Mismo email con cupón vigente → devuelve su cupón (no duplica)
+      const conCupon = leads.filter(l => l.email === lead.email && esCupon(l.cupon));
+      if (conCupon.length) {
+        const ultimo = conCupon[conCupon.length - 1];
+        res.writeHead(200, { "Content-Type": "application/json" });
+        return res.end(JSON.stringify({ ok: true, cupon: ultimo.cupon, repetido: true }));
+      }
+      const cupon = generarCupon(lead.premio,
         new Set(leads.map(l => (l.cupon || "").toUpperCase())));
       leads.push({ email: lead.email, premio: lead.premio, cupon, usado: false, fecha: new Date().toISOString() });
       await fs.writeFile(LEADS_FILE, JSON.stringify(leads, null, 2));
