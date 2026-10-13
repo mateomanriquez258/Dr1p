@@ -109,7 +109,15 @@ a { color: inherit; }
 
 /* [03] Drop (gris medio, texto blanco) */
 .drop { text-align: center; }
-.drop-title { font-size: clamp(26px, 5vw, 46px); margin: 0 0 20px; }
+.drop-title {
+  font-size: clamp(26px, 5vw, 46px); margin: 0 0 20px;
+  /* Letras cromadas: degradado metálico sobre el texto */
+  background: linear-gradient(180deg,
+    #ffffff 0%, #d7dade 28%, #7c8187 48%, #f2f4f6 62%, #ffffff 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,.55));
+}
 .count { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
 .count div { border: 1px solid #fff; padding: 14px 10px; min-width: 72px; background: rgba(0,0,0,.55); }
 .count span { font-family: var(--font-m); font-size: 30px; font-weight: 700; }
