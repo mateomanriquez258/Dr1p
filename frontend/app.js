@@ -10,6 +10,9 @@ const fmt = n => n.toLocaleString("es-AR");
 
 function filtrar(cat) {
   filtroActual = cat;
+  // El sidebar refleja la categoría del router (el usuario puede sumar más)
+  filtros.cats = cat === "todos" ? new Set() : new Set([cat]);
+  if (document.getElementById("f-cats")) renderFiltros();
   mostrarProductos();
   const titulos = { todos: "[ CATÁLOGO // TODOS ]", remeras: "[ CATÁLOGO // REMERAS ]", pantalones: "[ CATÁLOGO // PANTALONES ]", gorras: "[ CATÁLOGO // GORRAS ]" };
   document.getElementById("titulo-categoria").textContent = titulos[cat] || "Productos";
@@ -22,9 +25,51 @@ function listaFiltrada() {
   const q = busqueda.trim().toLowerCase();
   return PRODUCTOS.filter(p => {
     const okCat = filtroActual === "todos" || (p.categoria || "").toLowerCase() === filtroActual;
-    const okQ = !q || (p.nombre + " " + (p.categoria || "")).toLowerCase().includes(q);
-    return okCat && okQ;
+    const okQ = !q || (p.nombre + " " + (p.categoria || "") + " " + (p.marca || "")).toLowerCase().includes(q);
+    const okSideCat = !filtros.cats.size || filtros.cats.has((p.categoria || "").toLowerCase());
+    const okTalle = !filtros.talles.size || tallesPara(p).some(t => filtros.talles.has(t));
+    const okMarca = !filtros.marcas.size || (p.marca && filtros.marcas.has(p.marca));
+    const okMin = filtros.min === "" || p.precio >= +filtros.min;
+    const okMax = filtros.max === "" || p.precio <= +filtros.max;
+    return okCat && okQ && okSideCat && okTalle && okMarca && okMin && okMax;
   });
+}
+
+// ---- Panel lateral de filtros (categoría / talle / marca / precio) ----
+let filtros = { cats: new Set(), talles: new Set(), marcas: new Set(), min: "", max: "" };
+
+function checkRow(grupo, valor, label, extra) {
+  const on = filtros[grupo].has(valor) ? " checked" : "";
+  return `<label class="f-check"><input type="checkbox" data-grupo="${grupo}" value="${valor}"${on}> ${label}${extra || ""}</label>`;
+}
+
+function renderFiltros() {
+  const cats = [...new Set(PRODUCTOS.map(p => (p.categoria || "").toLowerCase()))];
+  const talles = [...new Set(PRODUCTOS.flatMap(p => tallesPara(p)))];
+  const marcas = [...new Set(PRODUCTOS.map(p => p.marca).filter(Boolean))].sort();
+  const n = fn => PRODUCTOS.filter(fn).length;
+  document.getElementById("f-cats").innerHTML = cats.map(c =>
+    checkRow("cats", c, c.toUpperCase(), `<small>(${n(p => (p.categoria || "").toLowerCase() === c)})</small>`)).join("");
+  document.getElementById("f-talles").innerHTML = talles.map(t => checkRow("talles", t, t)).join("");
+  document.getElementById("f-marcas").innerHTML = marcas.map(m =>
+    checkRow("marcas", m, m, `<small>(${n(p => p.marca === m)})</small>`)).join("");
+  document.getElementById("f-min").value = filtros.min;
+  document.getElementById("f-max").value = filtros.max;
+  document.querySelectorAll(".filters-side input[type=checkbox]").forEach(ch =>
+    ch.onchange = () => {
+      const set = filtros[ch.dataset.grupo];
+      ch.checked ? set.add(ch.value) : set.delete(ch.value);
+      mostrarProductos();
+    });
+  document.getElementById("f-min").oninput = e => { filtros.min = e.target.value; mostrarProductos(); };
+  document.getElementById("f-max").oninput = e => { filtros.max = e.target.value; mostrarProductos(); };
+}
+
+function limpiarFiltros() {
+  filtros = { cats: new Set(), talles: new Set(), marcas: new Set(), min: "", max: "" };
+  renderFiltros();
+  Router.ir("todos", false);
+  document.getElementById("catalogo").scrollIntoView({ behavior: "smooth" });
 }
 
 // Limpia el buscador (lo usa Router.catalogo antes de mostrar todo)
@@ -43,14 +88,14 @@ function mostrarProductos() {
         <span class="stock">¡Solo quedan ${p.stock} en stock!</span>
         <button onclick="agregar(${p.id})">CONSEGUIR DR1P</button>
       </div>
-    </div>`).join("") || "Sin productos en esta categoría";
+    </div>`).join("") || "Sin productos con esos filtros. Probá limpiar el sidebar.";
 }
 
-// Talles aislados por categoría: gorras solo Único, el resto M/L/XL
+// Talles aislados por categoría: gorras solo Único, el resto S–XXL
 function tallesPara(p) {
   return (p.categoria || "").toLowerCase() === "gorras"
     ? ["Único / 7 3/8"]
-    : ["M", "L", "XL"];
+    : ["S", "M", "L", "XL", "XXL"];
 }
 function talleDefault(p) {
   return (p.categoria || "").toLowerCase() === "gorras" ? "Único / 7 3/8" : "L";
@@ -107,7 +152,9 @@ function descripcionProd(p) {
 
 function vistaProductoVisible(on) {
   document.getElementById("producto").style.display = on ? "" : "none";
-  ["categorias", "catalogo", "drop", "probarte"].forEach(id => {
+  // En PDP solo quedan header + ficha (+contacto/footer): se oculta hero,
+  // marquesina y secciones de tienda
+  ["hero", "marquee", "categorias", "catalogo", "drop", "probarte", "contacto"].forEach(id => {
     const s = document.getElementById(id);
     if (s) s.style.display = on ? "none" : "";
   });
@@ -381,6 +428,7 @@ function init() {
       if (q && ["todos", "remeras", "pantalones", "gorras"].includes(q)) filtroActual = q;
     } catch {}
     mostrarCarrito();
+    renderFiltros(); // construye el sidebar con los datos reales
     window.__datosOK = true;
     if (window.Router) window.Router.refrescar(false);
     else if (typeof window.filtrar === "function") window.filtrar(filtroActual);

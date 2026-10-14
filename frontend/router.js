@@ -66,10 +66,10 @@
     aplicarRuta(rutaActual(), conScroll);
   }
 
-  function ir(cat) {
+  function ir(cat, conScroll) {
     if (VALIDAS.indexOf(cat) < 0) cat = "todos";
     history.pushState({ cat: cat, prod: null }, "", urlDe(cat, null));
-    aplicarRuta({ cat: cat, prod: null }, true);
+    aplicarRuta({ cat: cat, prod: null }, conScroll !== false);
   }
 
   function inicio() { ir("todos"); }
