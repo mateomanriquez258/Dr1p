@@ -49,32 +49,66 @@ const server = http.createServer(async (req, res) => {
     return res.end(JSON.stringify({ whatsapp: WHATSAPP_NUMERO }));
   }
 
-  // --- API: guardar pedido (quema el cupón: un solo uso) ---
+  // --- API: guardar pedido (1 cupón, revalidado y recalculado en servidor) ---
+  // REGLA: un solo cupón por orden. El servidor IGNORA los totales del
+  // cliente: recalcula subtotal con precios propios y aplica UN cupón
+  // válido y sin usar. Cupón inválido/usado → 400, pedido NO guardado.
   if (url.pathname === "/api/pedidos" && req.method === "POST") {
     try {
-      const pedido = await leerBody(req);
+      const body = await leerBody(req);
+      const catalogo = JSON.parse(await fs.readFile(PRODUCTOS_FILE, "utf-8"));
+      const items = Array.isArray(body.items) ? body.items : [];
+      if (!items.length) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        return res.end(JSON.stringify({ ok: false, error: "Carrito vacío" }));
+      }
+      // Subtotal con precios del servidor (no los del cliente)
+      let subtotal = 0;
+      const itemsOk = [];
+      for (const it of items) {
+        const p = catalogo.find(x => x.id == it.id);
+        const cant = parseInt(it.cant, 10);
+        if (!p || !(cant > 0)) {
+          res.writeHead(400, { "Content-Type": "application/json" });
+          return res.end(JSON.stringify({ ok: false, error: "Ítem inválido" }));
+        }
+        subtotal += p.precio * cant;
+        itemsOk.push({ id: p.id, nombre: p.nombre, talle: it.talle || "-", cant, precio: p.precio });
+      }
+      // Un solo cupón: se revalida contra leads (existe + no usado)
+      let cupon = null, descuento = 0;
+      const cod = (body.cupon && body.cupon.codigo || "").toUpperCase();
+      if (cod) {
+        const leads = JSON.parse(await fs.readFile(LEADS_FILE, "utf-8").catch(() => "[]"));
+        const lead = leads.find(l => (l.cupon || "").toUpperCase() === cod);
+        if (!lead || lead.usado) {
+          res.writeHead(400, { "Content-Type": "application/json" });
+          return res.end(JSON.stringify({ ok: false, error: "cupon_invalido" }));
+        }
+        const PCT_SRV = { "10OFF": 0.10, "15OFF": 0.15, "20OFF": 0.20, "A": 0.20 };
+        descuento = (lead.premio in PCT_SRV)
+          ? Math.round(subtotal * PCT_SRV[lead.premio])
+          : Math.min(5000, subtotal);
+        cupon = { codigo: cod, premio: lead.premio };
+        lead.usado = true; // quemado: un solo uso
+        await fs.writeFile(LEADS_FILE, JSON.stringify(leads, null, 2));
+      }
+      const pedido = {
+        nombre: body.nombre || "Sin nombre",
+        items: itemsOk,
+        subtotal, cupon, descuento,
+        total: subtotal - descuento,
+        fecha: new Date().toISOString()
+      };
+      if (cupon) pedido.cupon.usadoEn = pedido.fecha;
       let pedidos = [];
       try {
         pedidos = JSON.parse(await fs.readFile(PEDIDOS_FILE, "utf-8"));
       } catch { /* archivo no existe aun */ }
-      pedido.fecha = new Date().toISOString();
       pedidos.push(pedido);
       await fs.writeFile(PEDIDOS_FILE, JSON.stringify(pedidos, null, 2));
-      // Si el pedido trae cupón válido y sin usar → marcarlo como usado
-      const cod = (pedido.cupon && pedido.cupon.codigo || "").toUpperCase();
-      if (cod) {
-        try {
-          const leads = JSON.parse(await fs.readFile(LEADS_FILE, "utf-8"));
-          const lead = leads.find(l => (l.cupon || "").toUpperCase() === cod && !l.usado);
-          if (lead) {
-            lead.usado = true;
-            lead.usadoEn = pedido.fecha;
-            await fs.writeFile(LEADS_FILE, JSON.stringify(leads, null, 2));
-          }
-        } catch {}
-      }
       res.writeHead(201, { "Content-Type": "application/json" });
-      return res.end(JSON.stringify({ ok: true }));
+      return res.end(JSON.stringify({ ok: true, total: pedido.total, descuento }));
     } catch (e) {
       res.writeHead(400, { "Content-Type": "application/json" });
       return res.end(JSON.stringify({ ok: false, error: "Pedido invalido" }));
