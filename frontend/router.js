@@ -1,11 +1,13 @@
 /* =====================================================================
  * ROUTER SPA — Navegación sin recarga (history.pushState + popstate)
  *
- * Rutas:  / (todos)  |  /?cat=remeras | /?cat=pantalones | /?cat=gorras
- * - Click en categoría: cambia la URL con pushState y re-renderiza el
- *   catálogo SIN recargar → se mantiene layout, header, footer y scroll.
- * - "Inicio": limpia el filtro (?cat= desaparece) y vuelve arriba.
- * - Atrás/Adelante del navegador: evento popstate re-aplica la ruta.
+ * Rutas:  / (todos)  |  /?cat=remeras  |  /?cat=remeras&prod=3 ...
+ * - Categoría: cambia la URL con pushState y re-renderiza el catálogo
+ *   SIN recargar → se mantiene layout, header, footer y scroll.
+ * - Producto (?prod=ID): muestra la vista individual dinámica y oculta
+ *   las secciones de tienda (se reconstruyen al volver).
+ * - "Inicio"/logo: limpia filtros y vuelve arriba. Atrás/Adelante del
+ *   navegador: evento popstate re-aplica la ruta.
  * ===================================================================== */
 (function () {
   "use strict";
@@ -13,40 +15,78 @@
   var VALIDAS = ["todos", "remeras", "pantalones", "gorras"];
   var TITULOS = { todos: "[ CATÁLOGO // TODOS ]", remeras: "[ CATÁLOGO // REMERAS ]", pantalones: "[ CATÁLOGO // PANTALONES ]", gorras: "[ CATÁLOGO // GORRAS ]" };
 
+  // Lee la ruta actual: { cat, prod } (prod = id o null)
   function rutaActual() {
+    var cat = "todos", prod = null;
     try {
-      var c = new URLSearchParams(location.search).get("cat") || "todos";
-      return VALIDAS.indexOf(c) >= 0 ? c : "todos";
-    } catch (e) { return "todos"; }
+      var q = new URLSearchParams(location.search);
+      var c = q.get("cat") || "todos";
+      if (VALIDAS.indexOf(c) >= 0) cat = c;
+      var p = parseInt(q.get("prod") || "", 10);
+      if (!isNaN(p)) prod = p;
+    } catch (e) {}
+    return { cat: cat, prod: prod };
   }
 
-  // Aplica una ruta a la UI: filtra, marca link activo y hace scroll.
-  function aplicarRuta(cat, conScroll) {
-    if (typeof window.filtrar === "function") window.filtrar(cat);
+  function urlDe(cat, prod) {
+    var u = location.pathname;
+    var parts = [];
+    if (cat && cat !== "todos") parts.push("cat=" + cat);
+    if (prod != null) parts.push("prod=" + prod);
+    return parts.length ? u + "?" + parts.join("&") : u;
+  }
+
+  // Aplica una ruta a la UI (requiere datos ya cargados en app.js)
+  function aplicarRuta(ruta, conScroll) {
+    if (typeof window.filtrar === "function") window.filtrar(ruta.cat);
     var t = document.getElementById("titulo-categoria");
-    if (t) t.textContent = TITULOS[cat];
+    if (t) t.textContent = TITULOS[ruta.cat];
     document.querySelectorAll("[data-cat]").forEach(function (a) {
-      a.classList.toggle("active", a.getAttribute("data-cat") === cat);
+      a.classList.toggle("active", a.getAttribute("data-cat") === ruta.cat);
     });
-    if (conScroll) {
-      var dest = cat === "todos"
-        ? document.body
-        : document.getElementById("catalogo");
-      (cat === "todos"
-        ? window.scrollTo({ top: 0, behavior: "smooth" })
-        : dest && dest.scrollIntoView({ behavior: "smooth" }));
+    if (ruta.prod != null && typeof window.mostrarProducto === "function") {
+      window.mostrarProducto(ruta.prod);
+      if (conScroll) window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      if (typeof window.vistaProductoVisible === "function") window.vistaProductoVisible(false);
+      if (conScroll) {
+        if (ruta.cat === "todos") window.scrollTo({ top: 0, behavior: "smooth" });
+        else {
+          var dest = document.getElementById("catalogo");
+          if (dest) dest.scrollIntoView({ behavior: "smooth" });
+        }
+      }
     }
   }
 
-  // Navegación pública: usar en onclick="Router.ir('remeras')"
+  // Re-aplica la URL actual (la llama app.js cuando llegan los datos,
+  // y el evento popstate). Sin datos aún, no hace nada.
+  function refrescar(conScroll) {
+    if (!window.__datosOK) return;
+    aplicarRuta(rutaActual(), conScroll);
+  }
+
   function ir(cat) {
     if (VALIDAS.indexOf(cat) < 0) cat = "todos";
-    var url = cat === "todos" ? location.pathname : location.pathname + "?cat=" + cat;
-    history.pushState({ cat: cat }, "", url);
-    aplicarRuta(cat, true);
+    history.pushState({ cat: cat, prod: null }, "", urlDe(cat, null));
+    aplicarRuta({ cat: cat, prod: null }, true);
   }
 
   function inicio() { ir("todos"); }
+
+  // Vista individual: /?cat=remeras&prod=3 (conserva la categoría)
+  function irProd(id) {
+    var cat = rutaActual().cat;
+    history.pushState({ cat: cat, prod: id }, "", urlDe(cat, id));
+    aplicarRuta({ cat: cat, prod: id }, true);
+  }
+
+  // Volver desde el producto → atrás del navegador si hay historial,
+  // sino a la categoría actual
+  function volver() {
+    if (history.length > 1) history.back();
+    else ir(rutaActual().cat);
+  }
 
   // "Ver catálogo": limpia filtros y muestra TODO el inventario
   function catalogo() {
@@ -60,17 +100,15 @@
   // Logo = home absoluto: recarga / reseteando estados y filtros
   function home() { location.href = "/"; }
 
-  // Atrás / Adelante del navegador → re-render sin recarga
   window.addEventListener("popstate", function () {
-    aplicarRuta(rutaActual(), true);
+    refrescar(true);
   });
 
-  // Carga inicial: normaliza la URL (?cat= inválido → /) sin scroll
+  // Carga inicial: normaliza la URL sin scroll (app.js refresca al cargar datos)
   document.addEventListener("DOMContentLoaded", function () {
-    var cat = rutaActual();
-    history.replaceState({ cat: cat }, "", cat === "todos" ? location.pathname : location.pathname + "?cat=" + cat);
-    aplicarRuta(cat, false);
+    var r = rutaActual();
+    history.replaceState({ cat: r.cat, prod: r.prod }, "", urlDe(r.cat, r.prod));
   });
 
-  window.Router = { ir: ir, inicio: inicio, catalogo: catalogo, home: home, actual: rutaActual };
+  window.Router = { ir: ir, inicio: inicio, irProd: irProd, volver: volver, catalogo: catalogo, home: home, actual: rutaActual, refrescar: refrescar };
 })();

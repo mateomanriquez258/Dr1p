@@ -108,6 +108,35 @@ a { color: inherit; }
 .card-body button:hover { background: var(--silver); }
 
 /* [03] Drop (gris medio, texto blanco) */
+/* ---- Vista individual de producto ---- */
+.btn-volver { background: transparent; color: inherit; border: 1px solid currentColor; padding: 8px 14px; cursor: pointer; font-family: var(--font-m); font-size: 12px; margin-bottom: 16px; }
+.pd-layout { display: grid; gap: 24px; grid-template-columns: 1fr; }
+.pd-gallery { position: relative; background: #0a0a0a; border: 1px solid #000; align-self: start; }
+.pd-gallery img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+.free-tag {
+  position: absolute; top: 12px; left: 12px; z-index: 2;
+  background: #fff; color: #000; font-family: var(--font-m);
+  font-size: 11px; font-weight: 700; letter-spacing: 1px; padding: 6px 10px;
+}
+.pd-thumbs { display: flex; gap: 8px; padding: 8px; }
+.pd-thumbs img { width: 64px; height: 64px; object-fit: cover; cursor: pointer; border: 2px solid transparent; }
+.pd-thumbs img.sel { border-color: #fff; }
+.pd-info h2 { margin: 0 0 8px; font-size: clamp(24px, 4vw, 38px); }
+.pd-price { font-size: 26px; font-weight: 700; margin: 0 0 4px; }
+.pd-stock { font-family: var(--font-m); font-size: 12px; color: var(--silver); }
+.zone-light .pd-stock { color: #555; }
+.pd-label { display: block; font-family: var(--font-m); font-size: 12px; letter-spacing: 2px; margin: 12px 0; }
+.pd-label select { display: block; margin-top: 6px; padding: 10px; min-width: 200px; background: #000; color: #fff; border: 1px solid #fff; font-size: 14px; }
+.pd-qty { display: flex; align-items: center; gap: 16px; font-family: var(--font-m); font-size: 12px; letter-spacing: 2px; margin: 12px 0 20px; }
+.pd-qty button { background: #fff; color: #000; border: 0; width: 36px; height: 36px; font-size: 18px; cursor: pointer; }
+.pd-qty span span, #pd-cant { font-size: 18px; margin: 0 4px; }
+.pd-desc { margin-top: 20px; line-height: 1.7; font-size: 15px; }
+.pd-faq { margin: 36px 0; }
+.pd-faq details { border: 1px solid currentColor; margin-bottom: 8px; background: rgba(0,0,0,.35); }
+.zone-light .pd-faq details, .zone-mid .pd-faq details { background: rgba(0,0,0,.45); color: #fff; }
+.pd-faq summary { padding: 14px; cursor: pointer; font-family: var(--font-m); font-size: 13px; letter-spacing: 1px; }
+.pd-faq details p { padding: 0 14px 14px; margin: 0; font-size: 14px; line-height: 1.6; }
+@media (min-width: 860px) { .pd-layout { grid-template-columns: 1fr 1fr; } }
 .drop { text-align: center; }
 .drop-title {
   font-size: clamp(26px, 5vw, 46px); margin: 0 0 20px;
@@ -148,8 +177,6 @@ a { color: inherit; }
 .foot-grid a, .foot-grid span { display: block; font-family: var(--font-m); font-size: 12px; margin: 6px 0; text-decoration: none; color: #000; }
 .foot-grid a:hover { text-decoration: underline; }
 .foot-t { font-weight: 700; letter-spacing: 2px; margin: 0 0 10px; font-family: var(--font-m); font-size: 12px; }
-.watermark { text-align: center; font-family: var(--font-m); font-size: 11px; letter-spacing: 2px; color: #888; padding: 0 0 24px; margin: 0; }
-.watermark-float { position: fixed; bottom: 8px; right: 12px; font-family: var(--font-m); font-size: 11px; color: rgba(0,0,0,.55); background: rgba(255,255,255,.6); padding: 4px 8px; z-index: 5; pointer-events: none; }
 
 /* ---- Carrito (overlay oscuro, intacto) ---- */
 .cart-drawer { position: fixed; top: 0; right: -400px; width: 380px; max-width: 90vw; height: 100%; background: #0a0a0a; color: #fff; border-left: 1px solid #222; transition: right .3s ease; z-index: 90; display: flex; flex-direction: column; }

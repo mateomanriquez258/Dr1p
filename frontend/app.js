@@ -36,9 +36,9 @@ function limpiarBusqueda() {
 function mostrarProductos() {
   document.getElementById("productos").innerHTML = listaFiltrada().map(p => `
     <div class="card">
-      <img src="${p.imagen}" alt="${p.nombre}" loading="lazy">
+      <img src="${p.imagen}" alt="${p.nombre}" loading="lazy" onclick="Router.irProd(${p.id})" style="cursor:pointer">
       <div class="card-body">
-        <h3>${p.nombre}</h3>
+        <h3 onclick="Router.irProd(${p.id})" style="cursor:pointer">${p.nombre}</h3>
         <span class="price">$${fmt(p.precio)},00</span>
         <span class="stock">¡Solo quedan ${p.stock} en stock!</span>
         <button onclick="agregar(${p.id})">CONSEGUIR DR1P</button>
@@ -58,14 +58,19 @@ function talleDefault(p) {
 
 function agregar(id) {
   const p = PRODUCTOS.find(x => x.id == id);
-  const actual = lineasCarrito(id, talleDefault(p));
-  if (actual + 1 > p.stock) return alert("No hay más stock de este producto.");
-  // Misma prenda + mismo talle → suma cantidad; sino, línea independiente
-  const linea = carrito.find(l => l.id == id && l.talle === talleDefault(p));
-  if (linea) linea.cant++;
-  else carrito.push({ id, talle: talleDefault(p), cant: 1 });
-  mostrarCarrito();
+  agregarCantidad(id, talleDefault(p), 1);
   openCart();
+}
+
+// Agrega N unidades con talle elegido (usado por la vista individual)
+function agregarCantidad(id, talle, cant) {
+  const p = PRODUCTOS.find(x => x.id == id);
+  if (!p) return;
+  if (lineasCarrito(id) + cant > p.stock) return alert("No hay más stock de este producto.");
+  const linea = carrito.find(l => l.id == id && l.talle === talle);
+  if (linea) linea.cant += cant;
+  else carrito.push({ id, talle, cant });
+  mostrarCarrito();
 }
 
 function lineasCarrito(id, talle) {
@@ -85,7 +90,90 @@ function cambiar(i, d) {
   mostrarCarrito();
 }
 
-// Talle individual por línea: si ya existe otra línea igual, se fusionan
+// ---- Vista individual de producto (ruta ?prod=ID) ----
+let pdId = null, pdCant = 1;
+
+const DESC_CAT = {
+  remeras: "calce oversize que cae perfecto",
+  pantalones: "calce baggy cómodo para todos los días",
+  gorras: "ajuste fitted que se adapta a tu cabeza"
+};
+function descripcionProd(p) {
+  const cat = (p.categoria || "").toLowerCase();
+  const tela = cat === "gorras" ? "materiales premium de alta durabilidad"
+    : "tela suave que garantiza confort y durabilidad";
+  return `Elegí ${p.nombre}, una prenda de máxima calidad confeccionada con ${tela}, con ${DESC_CAT[cat] || "calce pensado para el día a día"}. Stock limitado: ¡solo quedan ${p.stock} unidades!`;
+}
+
+function vistaProductoVisible(on) {
+  document.getElementById("producto").style.display = on ? "" : "none";
+  ["categorias", "catalogo", "drop", "probarte"].forEach(id => {
+    const s = document.getElementById(id);
+    if (s) s.style.display = on ? "none" : "";
+  });
+}
+
+function mostrarProducto(id) {
+  const p = PRODUCTOS.find(x => x.id == id);
+  if (!p) { vistaProductoVisible(false); return; }
+  pdId = id; pdCant = 1;
+  const fotos = [p.imagen]; // galería: fotos del producto
+  document.getElementById("pd-img").src = fotos[0];
+  document.getElementById("pd-img").alt = p.nombre;
+  document.getElementById("pd-thumbs").innerHTML = fotos.map((f, i) =>
+    `<img src="${f}" class="${i === 0 ? "sel" : ""}" onclick="pdFoto(${i})">`).join("");
+  document.getElementById("pd-cat").textContent = "[ " + (p.categoria || "").toUpperCase() + " ]";
+  document.getElementById("pd-nombre").textContent = p.nombre;
+  document.getElementById("pd-precio").textContent = "$" + fmt(p.precio);
+  document.getElementById("pd-stock").textContent = "¡Solo quedan " + p.stock + " en stock!";
+  document.getElementById("pd-talle").innerHTML =
+    tallesPara(p).map(t => `<option>${t}</option>`).join("");
+  // Color: selector solo si el producto trae opciones, sino texto fijo
+  const colores = p.colores || [];
+  document.getElementById("pd-color-sel").style.display = colores.length > 1 ? "" : "none";
+  document.getElementById("pd-color-fijo").style.display = colores.length > 1 ? "none" : "";
+  if (colores.length > 1) {
+    document.getElementById("pd-color-sel").innerHTML =
+      colores.map(c => `<option>${c}</option>`).join("");
+  } else {
+    document.getElementById("pd-color-fijo").textContent = colores[0] || "Color de foto";
+  }
+  document.getElementById("pd-cant").textContent = "1";
+  document.getElementById("pd-desc").textContent = descripcionProd(p);
+  // Similares: misma categoría, sin el actual
+  const sim = PRODUCTOS.filter(x => x.id != id && (x.categoria || "") === (p.categoria || "")).slice(0, 4);
+  document.getElementById("pd-similares").innerHTML = sim.map(s => `
+    <div class="card">
+      <img src="${s.imagen}" alt="${s.nombre}" loading="lazy" onclick="Router.irProd(${s.id})" style="cursor:pointer">
+      <div class="card-body">
+        <h3 onclick="Router.irProd(${s.id})" style="cursor:pointer">${s.nombre}</h3>
+        <span class="price">$${fmt(s.precio)},00</span>
+        <button onclick="agregar(${s.id})">CONSEGUIR DR1P</button>
+      </div>
+    </div>`).join("") || "Sin similares por ahora";
+  vistaProductoVisible(true);
+}
+
+function pdFoto(i) {
+  const p = PRODUCTOS.find(x => x.id == pdId);
+  if (!p) return;
+  document.getElementById("pd-img").src = [p.imagen][i] || p.imagen;
+  document.querySelectorAll("#pd-thumbs img").forEach((t, j) =>
+    t.classList.toggle("sel", j === i));
+}
+
+function pdQty(d) {
+  const p = PRODUCTOS.find(x => x.id == pdId);
+  if (!p) return;
+  pdCant = Math.min(p.stock, Math.max(1, pdCant + d));
+  document.getElementById("pd-cant").textContent = pdCant;
+}
+
+function pdAgregar() {
+  if (pdId == null) return;
+  agregarCantidad(pdId, document.getElementById("pd-talle").value, pdCant);
+  openCart();
+}
 function setTalle(i, nuevoTalle) {
   const l = carrito[i];
   const otra = carrito.find((o, j) => j !== i && o.id == l.id && o.talle === nuevoTalle);
@@ -126,18 +214,22 @@ const CUPON_TXT = {
   "B": "✓ Cupón $5.000 aplicado"
 };
 
+// REGLA: 1 solo cupón por carrito. Aplicar uno nuevo REEMPLAZA al anterior,
+// nunca se suman. Input vacío + Aplicar (o botón ✕) quita el cupón.
 async function aplicarCupon() {
   const input = document.getElementById("cupon");
   const msg = document.getElementById("cupon-msg");
   const codigo = (input.value || "").trim().toUpperCase();
-  if (!codigo) return;
+  if (!codigo) { quitarCupon(); return; }
+  const previo = cuponAplicado ? cuponAplicado.codigo : null;
   try {
     const r = await fetch("/api/validar-cupon?codigo=" + encodeURIComponent(codigo));
     const data = await r.json();
     if (data.ok) {
-      cuponAplicado = { codigo, premio: data.premio };
+      cuponAplicado = { codigo, premio: data.premio }; // reemplazo, no suma
       msg.style.display = "block";
-      msg.textContent = CUPON_TXT[data.premio] || "✓ Cupón aplicado";
+      msg.textContent = (CUPON_TXT[data.premio] || "✓ Cupón aplicado") +
+        (previo && previo !== codigo ? " (reemplaza a " + previo + ")" : "");
     } else {
       cuponAplicado = null;
       msg.style.display = "block";
@@ -148,6 +240,15 @@ async function aplicarCupon() {
     msg.style.display = "block";
     msg.textContent = "✕ No se pudo validar el cupón";
   }
+  mostrarCarrito();
+}
+
+function quitarCupon() {
+  cuponAplicado = null;
+  document.getElementById("cupon").value = "";
+  const msg = document.getElementById("cupon-msg");
+  msg.style.display = "block";
+  msg.textContent = "Cupón quitado";
   mostrarCarrito();
 }
 
@@ -202,7 +303,7 @@ async function enviarWhatsApp() {
   const nombre = document.getElementById("nombre").value || "Sin nombre";
   const sub = total(), desc = descuento(), tot = totalFinal();
 
-  await fetch("/api/pedidos", {
+  const r = await fetch("/api/pedidos", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -211,9 +312,16 @@ async function enviarWhatsApp() {
         const p = PRODUCTOS.find(x => x.id == l.id);
         return { id: l.id, nombre: p.nombre, talle: l.talle, cant: l.cant, precio: p.precio };
       }),
-      subtotal: sub, cupon: cuponAplicado, descuento: desc, total: tot
+      cupon: cuponAplicado // el servidor revalida y recalcula (no confía en estos totales)
     }),
   });
+  if (!r.ok) {
+    // Cupón inválido/usado al momento del pedido → se limpia y no se envía
+    cuponAplicado = null;
+    mostrarCarrito();
+    alert("El cupón ya no es válido (usado o inexistente). Se quitó del pedido.");
+    return;
+  }
 
   const lineas = [`Hola Dr1p.tm! Soy ${nombre}, quiero comprar:`, ""];
   for (const l of carrito) {
@@ -264,8 +372,7 @@ function tickCountdown() {
 }
 
 function init() {
-  // La ruta inicial (?cat=) la aplica Router (replaceState, sin scroll).
-  // init solo hidrata datos; el filtrado lo dispara Router o este init.
+  // init hidrata datos y delega la ruta inicial al Router (?cat= / ?prod=)
   Promise.all([fetch("/api/productos"), fetch("/api/config")]).then(async ([pr, cfg]) => {
     PRODUCTOS = await pr.json();
     try { WHATSAPP_NUMERO = (await cfg.json()).whatsapp || WHATSAPP_NUMERO; } catch {}
@@ -274,13 +381,9 @@ function init() {
       if (q && ["todos", "remeras", "pantalones", "gorras"].includes(q)) filtroActual = q;
     } catch {}
     mostrarCarrito();
-    if (typeof window.filtrar === "function") window.filtrar(filtroActual);
-    if (window.Router) {
-      const t = { todos: "[ CATÁLOGO // TODOS ]", remeras: "[ CATÁLOGO // REMERAS ]", pantalones: "[ CATÁLOGO // PANTALONES ]", gorras: "[ CATÁLOGO // GORRAS ]" };
-      document.getElementById("titulo-categoria").textContent = t[filtroActual];
-      document.querySelectorAll("[data-cat]").forEach(a =>
-        a.classList.toggle("active", a.getAttribute("data-cat") === filtroActual));
-    }
+    window.__datosOK = true;
+    if (window.Router) window.Router.refrescar(false);
+    else if (typeof window.filtrar === "function") window.filtrar(filtroActual);
   });
 
   // Buscador en vivo (no toca la URL ni el historial)

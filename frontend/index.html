@@ -88,6 +88,50 @@
     <div id="productos" class="grid"></div>
   </section>
 
+  <!-- ===== VISTA INDIVIDUAL DE PRODUCTO (ruta ?prod=ID) ===== -->
+  <section id="producto" class="section zone-mid" style="display:none">
+    <button class="btn-volver" onclick="Router.volver()">← VOLVER</button>
+    <div class="pd-layout">
+      <div class="pd-gallery">
+        <span class="free-tag">ENVÍO GRATIS</span>
+        <img id="pd-img" src="" alt="Producto">
+        <div id="pd-thumbs" class="pd-thumbs"></div>
+      </div>
+      <div class="pd-info">
+        <p id="pd-cat" class="idx"></p>
+        <h2 id="pd-nombre"></h2>
+        <p id="pd-precio" class="pd-price"></p>
+        <p id="pd-stock" class="pd-stock"></p>
+        <label class="pd-label">TALLE
+          <select id="pd-talle"></select>
+        </label>
+        <label class="pd-label" id="pd-color-wrap">COLOR
+          <select id="pd-color-sel" style="display:none"></select>
+          <span id="pd-color-fijo"></span>
+        </label>
+        <div class="pd-qty">
+          <span>CANTIDAD</span>
+          <div>
+            <button onclick="pdQty(-1)">-</button>
+            <span id="pd-cant">1</span>
+            <button onclick="pdQty(1)">+</button>
+          </div>
+        </div>
+        <button class="btn-light" onclick="pdAgregar()">AGREGAR AL CARRITO</button>
+        <p id="pd-desc" class="pd-desc"></p>
+      </div>
+    </div>
+    <div class="pd-faq">
+      <p class="idx">[ FAQ // PREGUNTAS FRECUENTES ]</p>
+      <details><summary>CAMBIOS Y DEVOLUCIONES</summary><p>Aceptamos cambios dentro de los 7 días con la prenda sin uso y con etiqueta. Escribinos por WhatsApp con tu nombre y coordinamos.</p></details>
+      <details><summary>TIEMPOS DE ENVÍO</summary><p>Hacemos envíos a todo el país. El despacho se coordina por WhatsApp al confirmar tu pedido, generalmente dentro de las 24/48hs.</p></details>
+      <details><summary>CUIDADOS DE LAVADO</summary><p>Lavar con agua fría y del revés, no usar secadora ni lavandina. Así el estampado y la tela duran mucho más.</p></details>
+      <details><summary>SEGUIMIENTO DE MI PEDIDO</summary><p>Escribinos por WhatsApp con tu nombre y te pasamos el estado y el seguimiento de tu compra.</p></details>
+    </div>
+    <p class="idx">[ SIMILARES // SEGUÍ EXPLORANDO ]</p>
+    <div id="pd-similares" class="grid"></div>
+  </section>
+
   <!-- ===== [03] PRÓXIMO DROP (gris medio→claro) ===== -->
   <section id="drop" class="section zone-mid drop">
     <p class="idx">[ 03 // PRÓXIMO DROP ]</p>
@@ -158,12 +202,10 @@
     </div>
     <div>
       <p class="foot-t">PAGOS</p>
-      <span>TRANSFERENCIA (−20%)</span><span>EFECTIVO</span><span>3 CUOTAS SIN INTERÉS</span>
+      <span>EFECTIVO</span><span>3 CUOTAS SIN INTERÉS</span><span>TODOS LOS MEDIOS DE PAGO</span>
     </div>
   </div>
-  <p class="watermark">HECHA POR SANTIAGO GARRIDO</p>
 </footer>
-<div class="watermark-float">Hecha por Santiago Garrido</div>
 <button id="spin-fab" class="spin-fab">GIRÁ Y GANÁ</button>
 
 <!-- ===== CARRITO ===== -->
@@ -176,8 +218,9 @@
   <div class="cart-foot">
     <p>Subtotal: $<span id="total">0</span></p>
     <div class="coupon-row">
-      <input id="cupon" placeholder="Cupón (ej: DR1P-20OFF-XXXX)">
+      <input id="cupon" placeholder="Cupón (1 por pedido)">
       <button onclick="aplicarCupon()">Aplicar</button>
+      <button onclick="quitarCupon()" title="Quitar cupón">✕</button>
     </div>
     <p id="cupon-msg" class="ok-msg" style="display:none"></p>
     <p id="descuento-line" style="display:none">Descuento: -$<span id="descuento">0</span></p>
