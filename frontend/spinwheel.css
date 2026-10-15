@@ -42,14 +42,14 @@
   border: 6px solid #c9ccd1;
   box-shadow: 0 0 24px rgba(255,255,255,.15), inset 0 0 30px rgba(0,0,0,.8);
   position: relative; overflow: hidden;
-  /* 6 sectores coloridos: 10% verde | deco | 15% dorado | deco | 20% azul | $5000 ROJO */
+  /* Paleta única (idéntica al banner): 10% y 15% ROJO · 20% VERDE · resto NEGRO */
   background: conic-gradient(
-    #25D366 0deg 60deg,
-    #2b2b2b 60deg 120deg,
-    #FFB703 120deg 180deg,
-    #2b2b2b 180deg 240deg,
-    #49539E 240deg 300deg,
-    #D62828 300deg 360deg
+    #D62828 0deg 60deg,
+    #141414 60deg 120deg,
+    #D62828 120deg 180deg,
+    #141414 180deg 240deg,
+    #25D366 240deg 300deg,
+    #1a1a1a 300deg 360deg
   );
   transition: transform 4.2s cubic-bezier(.12,.8,.08,1); /* desaceleración natural */
 }
@@ -57,13 +57,6 @@
   position: absolute; left: 50%; top: 50%;
   width: 80px; font-size: 11px; font-weight: 700; text-align: center;
   color: #fff; text-shadow: 0 1px 2px #000;
-}
-.spin-hub {
-  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
-  width: 60px; height: 60px; border-radius: 50%;
-  background: #000; color: #fff; border: 3px solid #c9ccd1;
-  display: flex; align-items: center; justify-content: center;
-  font-family: Anton, sans-serif; font-size: 15px; letter-spacing: 1px;
 }
 
 /* Form */

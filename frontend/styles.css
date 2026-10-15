@@ -64,15 +64,7 @@ a { color: inherit; }
 .cart-btn { background: #fff; color: #000; border: 0; padding: 8px 16px; font-size: 15px; cursor: pointer; }
 
 /* ---- Banner ruleta + envíos (maquetación limpia 3 bloques) ---- */
-.ruleta-banner {
-  background:
-    radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.07), transparent 60%),
-    repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 2px, transparent 2px 5px),
-    #070707;
-  border-top: 1px solid var(--gline-d);
-  border-bottom: 1px solid var(--gline-d);
-  color: #fff;
-}
+.ruleta-banner { background: #000; color: #fff; }
 .rb-grid {
   max-width: 1320px; margin: auto; padding: 40px 20px;
   display: grid; gap: 28px; grid-template-columns: 1fr;
@@ -91,9 +83,10 @@ a { color: inherit; }
   position: absolute; inset: 0; border-radius: 50%;
   border: 5px solid #c9ccd1;
   box-shadow: 0 0 24px rgba(255,255,255,.15), inset 0 0 30px rgba(0,0,0,.8);
+  /* Paleta única: 10% y 15% ROJO · 20% VERDE · $5000 y deco NEGRO */
   background: conic-gradient(
-    #25D366 0deg 60deg, #2b2b2b 60deg 120deg, #FFB703 120deg 180deg,
-    #2b2b2b 180deg 240deg, #49539E 240deg 300deg, #D62828 300deg 360deg
+    #D62828 0deg 60deg, #141414 60deg 120deg, #D62828 120deg 180deg,
+    #141414 180deg 240deg, #25D366 240deg 300deg, #1a1a1a 300deg 360deg
   );
   animation: rb-spin 14s linear infinite;
 }
