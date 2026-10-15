@@ -42,13 +42,13 @@
   border: 6px solid #c9ccd1;
   box-shadow: 0 0 24px rgba(255,255,255,.15), inset 0 0 30px rgba(0,0,0,.8);
   position: relative; overflow: hidden;
-  /* Paleta única (idéntica al banner): 10% y 15% ROJO · 20% VERDE · resto NEGRO */
+  /* Paleta única (idéntica al banner): 10%, 15% y 20% ROJO · resto NEGRO */
   background: conic-gradient(
     #D62828 0deg 60deg,
     #141414 60deg 120deg,
     #D62828 120deg 180deg,
     #141414 180deg 240deg,
-    #25D366 240deg 300deg,
+    #D62828 240deg 300deg,
     #1a1a1a 300deg 360deg
   );
   transition: transform 4.2s cubic-bezier(.12,.8,.08,1); /* desaceleración natural */
