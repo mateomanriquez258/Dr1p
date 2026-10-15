@@ -63,6 +63,56 @@ a { color: inherit; }
 }
 .cart-btn { background: #fff; color: #000; border: 0; padding: 8px 16px; font-size: 15px; cursor: pointer; }
 
+/* ---- Banner ruleta + envíos (estética oscura grunge) ---- */
+.ruleta-banner {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.07), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 2px, transparent 2px 5px),
+    #070707;
+  border-top: 1px solid var(--gline-d);
+  border-bottom: 1px solid var(--gline-d);
+  color: #fff;
+}
+.rb-grid {
+  max-width: 1320px; margin: auto; padding: 40px 20px;
+  display: grid; gap: 28px; grid-template-columns: 1fr;
+  align-items: center; text-align: center;
+}
+.rb-kicker { font-family: var(--font-m); font-size: 12px; letter-spacing: 4px; color: var(--silver); margin: 0; }
+.rb-title { font-family: Anton, var(--font-d); font-size: clamp(44px, 7vw, 84px); line-height: .95; margin: 8px 0; }
+.rb-sub { font-family: var(--font-m); font-size: 13px; letter-spacing: 1px; }
+.rb-btn { background: #fff; color: #000; border: 0; padding: 14px 30px; font-weight: 700; font-size: 15px; cursor: pointer; letter-spacing: 1px; margin-top: 8px; }
+.rb-btn:hover { background: var(--silver); }
+.rb-wheel { position: relative; width: 230px; height: 230px; margin: auto; }
+.rb-wheel-in {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 5px solid #c9ccd1;
+  box-shadow: 0 0 24px rgba(255,255,255,.15), inset 0 0 30px rgba(0,0,0,.8);
+  background: conic-gradient(
+    #1c1c1c 0deg 60deg, #0b0b0b 60deg 120deg, #262626 120deg 180deg,
+    #0b0b0b 180deg 240deg, #3d3d3d 240deg 300deg, #D62828 300deg 360deg
+  );
+  animation: rb-spin 14s linear infinite;
+}
+@keyframes rb-spin { to { transform: rotate(360deg); } }
+.rb-wheel-in span {
+  position: absolute; left: 50%; top: 50%;
+  font-size: 10px; font-weight: 700; color: #fff; text-shadow: 0 1px 2px #000;
+  white-space: nowrap;
+}
+.rb-hub {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  width: 64px; height: 64px; border-radius: 50%;
+  background: #000; border: 3px solid #c9ccd1;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.rb-hub img { width: 52px; height: auto; }
+.rb-ship { border: 1px solid #444; padding: 28px 20px; background: rgba(255,255,255,.02); }
+.rb-ship svg { width: 64px; height: 40px; }
+.rb-price { font-family: Anton, var(--font-d); font-size: clamp(40px, 5vw, 60px); margin: 4px 0 12px; }
+.rb-ship a { font-family: var(--font-m); font-size: 12px; letter-spacing: 2px; text-decoration: none; }
+@media (min-width: 960px) { .rb-grid { grid-template-columns: 1fr auto 1fr; text-align: left; } .rb-ship { text-align: center; } }
+
 /* ---- Hero + marquee ---- */
 .hero { position: relative; min-height: 62vh; display: flex; align-items: flex-end; overflow: hidden; color: #fff; }
 .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .4; }

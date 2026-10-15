@@ -25,7 +25,7 @@
     { tipo: "10OFF", titulo: "10% OFF en tu próxima compra", color: "10% OFF" },
     { tipo: "NONE", titulo: "Sin suerte hoy", color: "SIN SUERTE" },
     { tipo: "15OFF", titulo: "15% OFF en tu próxima compra", color: "15% OFF" },
-    { tipo: "NONE", titulo: "Seguí intentando", color: "SEGUÍ" },
+    { tipo: "NONE", titulo: "Seguí intentando", color: "SEGUÍ INTENTANDO" },
     { tipo: "20OFF", titulo: "20% OFF en tu próxima compra", color: "20% OFF" },
     { tipo: "5000", titulo: "$5.000 de regalo", color: "$5000" }
   ];

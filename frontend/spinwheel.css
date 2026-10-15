@@ -10,7 +10,11 @@
 .spin-modal {
   position: relative;
   width: 100%; max-width: 420px;
-  background: #0a0a0a; color: #E0FFFF;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.07), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.02) 0 2px, transparent 2px 5px),
+    #0a0a0a;
+  color: #E0FFFF;
   border: 1px solid #333; border-radius: 12px;
   padding: 24px 20px; text-align: center;
   animation: spin-pop .3s ease;
@@ -24,7 +28,7 @@
   background: transparent; border: 0; color: #fff;
   font-size: 22px; cursor: pointer;
 }
-.spin-modal h2 { font-family: "Zalando Sans Expanded", sans-serif; margin: 0 0 6px; font-size: 22px; }
+.spin-modal h2 { font-family: Anton, "Zalando Sans Expanded", sans-serif; letter-spacing: 1px; margin: 0 0 6px; font-size: 26px; }
 .spin-sub { color: #9aa5a5; font-size: 14px; margin: 0 0 16px; }
 
 /* Ruleta */
@@ -35,15 +39,16 @@
 }
 .spin-wheel {
   width: 100%; height: 100%; border-radius: 50%;
-  border: 6px solid #fff;
+  border: 6px solid #c9ccd1;
+  box-shadow: 0 0 24px rgba(255,255,255,.15), inset 0 0 30px rgba(0,0,0,.8);
   position: relative; overflow: hidden;
-  /* 6 segmentos: 10% verde | pierde gris | 15% dorado | pierde gris | 20% azul | $5000 ROJO */
+  /* 6 segmentos oscuros + $5000 ROJO (debe coincidir con spinwheel.js) */
   background: conic-gradient(
-    #25D366 0deg 60deg,
-    #2b2b2b 60deg 120deg,
-    #FFB703 120deg 180deg,
-    #2b2b2b 180deg 240deg,
-    #49539E 240deg 300deg,
+    #1c1c1c 0deg 60deg,
+    #0b0b0b 60deg 120deg,
+    #262626 120deg 180deg,
+    #0b0b0b 180deg 240deg,
+    #3d3d3d 240deg 300deg,
     #D62828 300deg 360deg
   );
   transition: transform 4.2s cubic-bezier(.12,.8,.08,1); /* desaceleración natural */
@@ -55,11 +60,11 @@
 }
 .spin-hub {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
-  width: 56px; height: 56px; border-radius: 50%;
-  background: #000; color: #fff; border: 3px solid #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 12px;
+  width: 60px; height: 60px; border-radius: 50%;
+  background: #000; border: 3px solid #c9ccd1;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
 }
+.spin-hub img { width: 48px; height: auto; }
 
 /* Form */
 .spin-form { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
