@@ -1,9 +1,10 @@
 /* =====================================================================
  * SPIN-TO-WIN — Ruleta de captación (Vanilla JS, modularizado)
  *
- * 6 segmentos (60° c/u): 10% OFF | Sin suerte | 15% OFF |
- *   Seguí intentando | 20% OFF | $5.000 (fondo ROJO)
- * Sorteo uniforme entre los 6. Los perdedores no generan cupón.
+ * 6 segmentos (60° c/u): 10% OFF | PRÓXIMA | 15% OFF |
+ *   SEGUÍ | 20% OFF | $5000 (fondo ROJO)
+ * LÓGICA ARREGLADA: 'PRÓXIMA'/'SEGUÍ' son estrictamente decorativos,
+ * la ruleta NUNCA frena ahí. Sorteo uniforme entre los 4 premios válidos.
  *
  * LÍMITE 24 HS por dispositivo (localStorage dr1p_spin_ts).
  * Si intenta antes → vista "[ VUELVE EN 24HS PARA OTRA OPORTUNIDAD ]".
@@ -20,15 +21,16 @@
   var SEGMENTOS = 6;
   var GRADOS_SEG = 360 / SEGMENTOS;
   // Mapa de segmentos (debe coincidir con el conic-gradient del CSS):
-  // 0:10% | 1:pierde | 2:15% | 3:pierde | 4:20% | 5:$5000
+  // 0:10% gana | 1:deco | 2:15% gana | 3:deco | 4:20% gana | 5:$5000 gana
   var PREMIOS = [
     { tipo: "10OFF", titulo: "10% OFF en tu próxima compra", color: "10% OFF" },
-    { tipo: "NONE", titulo: "Sin suerte hoy", color: "SIN SUERTE" },
+    { tipo: "NONE", titulo: "Próxima", color: "PRÓXIMA" },
     { tipo: "15OFF", titulo: "15% OFF en tu próxima compra", color: "15% OFF" },
-    { tipo: "NONE", titulo: "Seguí intentando", color: "SEGUÍ INTENTANDO" },
+    { tipo: "NONE", titulo: "Seguí", color: "SEGUÍ" },
     { tipo: "20OFF", titulo: "20% OFF en tu próxima compra", color: "20% OFF" },
     { tipo: "5000", titulo: "$5.000 de regalo", color: "$5000" }
   ];
+  var GANADORES = [0, 2, 4, 5]; // índices válidos: NUNCA cae en decorativos
   var LS_TS = "dr1p_spin_ts";        // timestamp del último giro (24hs)
   var LS_CLOSED = "dr1p_spin_closed"; // lo cerró → no insistir en sesión
   var MS_24H = 24 * 3600 * 1000;
@@ -145,18 +147,17 @@
     }
   }
 
-  // ---- 6. Sorteo uniforme ANTES de animar (puede tocar perdedor) ----
+  // ---- 6. Sorteo ARREGLADO: elige ganador ANTES de animar ----
+  // Solo entre los 4 premios válidos; decorativos excluidos por diseño.
   function elegirPremio() {
-    var idx = Math.floor(Math.random() * SEGMENTOS);
+    var idx = GANADORES[Math.floor(Math.random() * GANADORES.length)];
     var base = PREMIOS[idx];
     return {
       tipo: base.tipo,
       indice: idx,
       titulo: base.titulo,
-      gana: base.tipo !== "NONE",
-      cupon: base.tipo !== "NONE"
-        ? "PENDIENTE-" + base.tipo // el servidor confirma el código real
-        : null
+      gana: true,
+      cupon: "PENDIENTE-" + base.tipo // el servidor confirma el código real
     };
   }
 
@@ -208,14 +209,13 @@
     return p;
   }
 
-  // ---- 10. Pantalla de resultado ----
+  // ---- 10. Pantalla de victoria (siempre hay premio: GANADORES) ----
   function mostrarVictoria() {
     girando = false;
     try { localStorage.setItem(LS_TS, String(Date.now())); } catch (e) {} // arranca las 24hs
     formBox.style.display = "none";
     stageBox.style.display = "none";
-    if (premioActual.gana) {
-      if (leadCupon) premioActual.cupon = leadCupon;
+    if (leadCupon) premioActual.cupon = leadCupon; // código confirmado por el servidor
       $("spin-title").textContent = "¡Felicitaciones!";
       $("spin-sub").textContent = "Ganaste:";
       $("win-prize").textContent = premioActual.titulo;
@@ -224,14 +224,6 @@
         ? "Copiá el código y pegalo en el campo CUPÓN del carrito antes de finalizar por WhatsApp. Se descuentan $5.000 del total."
         : "Copiá el código y pegalo en el campo CUPÓN del carrito antes de finalizar por WhatsApp. Se descuenta el % del total.";
       winBox.classList.add("show");
-    } else {
-      // Sin premio: mensaje seco, sin cupón ni botón copiar
-      $("spin-title").textContent = premioActual.titulo;
-      $("spin-sub").textContent = "Podrás intentarlo de nuevo en 24hs.";
-      winBox.classList.remove("show");
-      coolBox.classList.add("show");
-      $("cool-msg").textContent = "[ VUELVE EN 24HS PARA OTRA OPORTUNIDAD ]";
-    }
   }
 
   function copiarCupon() {

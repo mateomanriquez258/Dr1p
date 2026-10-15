@@ -46,17 +46,36 @@
   <section class="hero" id="hero">
     <img class="hero-bg" src="https://dcdn-us.mitiendanube.com/stores/008/356/664/media/377a1105-3e14f6b4-9ba6-40a6-ad37-acd5081586c5/source.png" alt="" onerror="this.style.display='none'">
     <div class="hero-content">
-      <p class="kicker">SS26 — STOCK LIMITADO · M–XL</p>
+      <p class="kicker">SS 26 - STOCK LIMITADO - PRENDAS EXCLUSIVAS</p>
       <h1>LLENATE<br>DE DR1P.</h1>
       <a href="#catalogo" class="btn-light" onclick="Router.catalogo();return false;">VER CATÁLOGO</a>
     </div>
   </section>
-  <!-- ===== BANNER PROMO ANCHO COMPLETO (ruleta + envíos) ===== -->
+  <!-- ===== BANNER RULETA + ENVÍOS (maquetación limpia 3 bloques) ===== -->
   <section class="ruleta-banner">
-    <div class="rb-full">
-      <img src="assets/ccf6c33d-39d1-43d1-bdbb-0eb85adfe5fe.jpg" alt="Girá la ruleta y ganá descuentos. Envíos a todo el país gratis a partir de $120.000">
-      <button class="rb-hot girar" onclick="SpinWin.abrir()">GIRAR AHORA</button>
-      <a class="rb-hot cond" href="#contacto">VER CONDICIONES</a>
+    <div class="rb-grid">
+      <div class="rb-text">
+        <p class="rb-kicker">GIRÁ LA RULETA Y</p>
+        <h2 class="rb-title">GANÁ<br>DESCUENTOS</h2>
+        <p class="rb-sub">¡Cada giro puede ser tuyo!</p>
+        <button class="rb-btn" onclick="SpinWin.abrir()">GIRAR AHORA →</button>
+      </div>
+      <div class="rb-wheel" aria-hidden="true">
+        <div class="rb-wheel-in">
+          <span style="transform:translate(-50%,-50%) rotate(30deg) translateY(-72px) rotate(-30deg)">10% OFF</span>
+          <span style="transform:translate(-50%,-50%) rotate(90deg) translateY(-72px) rotate(-90deg)">PRÓXIMA</span>
+          <span style="transform:translate(-50%,-50%) rotate(150deg) translateY(-72px) rotate(-150deg)">15% OFF</span>
+          <span style="transform:translate(-50%,-50%) rotate(210deg) translateY(-72px) rotate(-210deg)">SEGUÍ</span>
+          <span style="transform:translate(-50%,-50%) rotate(270deg) translateY(-72px) rotate(-270deg)">20% OFF</span>
+          <span style="transform:translate(-50%,-50%) rotate(330deg) translateY(-72px) rotate(-330deg)">$5000</span>
+        </div>
+      </div>
+      <div class="rb-ship">
+        <svg viewBox="0 0 64 40" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="2.5"><rect x="2" y="8" width="34" height="20"/><path d="M36 14h12l8 8v6H36z"/><circle cx="14" cy="32" r="4"/><circle cx="46" cy="32" r="4"/></g></svg>
+        <p class="rb-kicker">ENVÍOS A TODO EL PAÍS</p>
+        <p class="rb-price">GRATIS A PARTIR DE $120.000</p>
+        <a href="#contacto">VER CONDICIONES →</a>
+      </div>
     </div>
   </section>
   <div class="marquee" id="marquee" aria-hidden="true">
@@ -275,7 +294,7 @@
     <div id="spin-stage" class="spin-stage">
       <div class="spin-pointer">🔻</div>
       <div id="spin-wheel" class="spin-wheel"><div id="spin-labels"></div></div>
-      <div class="spin-hub"><img src="assets/logo.png" alt="DR1P"></div>
+      <div class="spin-hub">DR1P</div>
     </div>
     <div id="spin-form-box">
       <form class="spin-form" action="https://formspree.io/f/xaeqdvol" method="POST" onsubmit="return false;">

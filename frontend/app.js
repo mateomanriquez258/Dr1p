@@ -8,6 +8,10 @@ const DROP_DATE = new Date("2026-12-01T20:00:00-03:00").getTime(); // [03] DROP 
 
 const fmt = n => n.toLocaleString("es-AR");
 
+// Nombres limpios para vidriera: quita "(M-XL)" o cualquier rango entre paréntesis.
+// En carrito y WhatsApp se conserva el nombre completo para identificar la prenda.
+function nombreLimpio(n) { return (n || "").replace(/\s*\([^)]*\)\s*/g, "").trim(); }
+
 function filtrar(cat) {
   filtroActual = cat;
   // El sidebar refleja la categoría del router (el usuario puede sumar más)
@@ -83,7 +87,7 @@ function mostrarProductos() {
     <div class="card">
       <img src="${p.imagen}" alt="${p.nombre}" loading="lazy" onclick="Router.irProd(${p.id})" style="cursor:pointer">
       <div class="card-body">
-        <h3 onclick="Router.irProd(${p.id})" style="cursor:pointer">${p.nombre}</h3>
+        <h3 onclick="Router.irProd(${p.id})" style="cursor:pointer">${nombreLimpio(p.nombre)}</h3>
         <span class="price">$${fmt(p.precio)},00</span>
         <span class="stock">¡Solo quedan ${p.stock} en stock!</span>
         <button onclick="agregar(${p.id})">CONSEGUIR DR1P</button>
@@ -147,7 +151,7 @@ function descripcionProd(p) {
   const cat = (p.categoria || "").toLowerCase();
   const tela = cat === "gorras" ? "materiales premium de alta durabilidad"
     : "tela suave que garantiza confort y durabilidad";
-  return `Elegí ${p.nombre}, una prenda de máxima calidad confeccionada con ${tela}, con ${DESC_CAT[cat] || "calce pensado para el día a día"}. Stock limitado: ¡solo quedan ${p.stock} unidades!`;
+  return `Elegí ${nombreLimpio(p.nombre)}, una prenda de máxima calidad confeccionada con ${tela}, con ${DESC_CAT[cat] || "calce pensado para el día a día"}. Stock limitado: ¡solo quedan ${p.stock} unidades!`;
 }
 
 function vistaProductoVisible(on) {
@@ -170,7 +174,7 @@ function mostrarProducto(id) {
   document.getElementById("pd-thumbs").innerHTML = fotos.map((f, i) =>
     `<img src="${f}" class="${i === 0 ? "sel" : ""}" onclick="pdFoto(${i})">`).join("");
   document.getElementById("pd-cat").textContent = "[ " + (p.categoria || "").toUpperCase() + " ]";
-  document.getElementById("pd-nombre").textContent = p.nombre;
+  document.getElementById("pd-nombre").textContent = nombreLimpio(p.nombre);
   document.getElementById("pd-precio").textContent = "$" + fmt(p.precio);
   document.getElementById("pd-stock").textContent = "¡Solo quedan " + p.stock + " en stock!";
   document.getElementById("pd-talle").innerHTML =
@@ -193,7 +197,7 @@ function mostrarProducto(id) {
     <div class="card">
       <img src="${s.imagen}" alt="${s.nombre}" loading="lazy" onclick="Router.irProd(${s.id})" style="cursor:pointer">
       <div class="card-body">
-        <h3 onclick="Router.irProd(${s.id})" style="cursor:pointer">${s.nombre}</h3>
+        <h3 onclick="Router.irProd(${s.id})" style="cursor:pointer">${nombreLimpio(s.nombre)}</h3>
         <span class="price">$${fmt(s.precio)},00</span>
         <button onclick="agregar(${s.id})">CONSEGUIR DR1P</button>
       </div>
