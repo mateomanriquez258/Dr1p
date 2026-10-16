@@ -95,14 +95,17 @@ function mostrarProductos() {
     </div>`).join("") || "Sin productos con esos filtros. Probá limpiar el sidebar.";
 }
 
-// Talles aislados por categoría: gorras solo Único, el resto S–XXL
+// Talles: si el producto trae `talles` propios se usan esos;
+// sino, aislados por categoría (gorras solo Único, el resto S–XXL)
 function tallesPara(p) {
+  if (Array.isArray(p.talles) && p.talles.length) return p.talles;
   return (p.categoria || "").toLowerCase() === "gorras"
     ? ["Único / 7 3/8"]
     : ["S", "M", "L", "XL", "XXL"];
 }
 function talleDefault(p) {
-  return (p.categoria || "").toLowerCase() === "gorras" ? "Único / 7 3/8" : "L";
+  const t = tallesPara(p);
+  return t.includes("L") ? "L" : t[0];
 }
 
 function agregar(id) {
