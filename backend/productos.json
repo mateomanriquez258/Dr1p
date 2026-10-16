@@ -52,8 +52,9 @@
   },
   {
     "id": 6,
-    "nombre": "Pantalón Short Jordan Gris (M-XL)",
+    "nombre": "Pantalón Short Jordan Gris (M–3XL)",
     "marca": "Jordan",
+    "talles": ["M", "L", "XL", "XXL", "3XL"],
     "precio": 28990,
     "precio_base": 24158,
     "stock": 5,
@@ -62,8 +63,9 @@
   },
   {
     "id": 7,
-    "nombre": "Pantalón Short Jordan Negro (M-XL)",
+    "nombre": "Pantalón Short Jordan Negro (M · 2XL · 3XL)",
     "marca": "Jordan",
+    "talles": ["M", "2XL", "3XL"],
     "precio": 26990,
     "precio_base": 22492,
     "stock": 5,
@@ -72,8 +74,9 @@
   },
   {
     "id": 8,
-    "nombre": "Pantalón Short Jordan Negro V2 (M-XL)",
+    "nombre": "Pantalón Short Jordan Negro V2 (L · XL)",
     "marca": "Jordan",
+    "talles": ["L", "XL"],
     "precio": 26990,
     "precio_base": 22492,
     "stock": 5,
