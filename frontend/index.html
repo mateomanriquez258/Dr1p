@@ -110,29 +110,34 @@
         <button onclick="Router.ir('remeras')">Remeras</button>
         <button onclick="Router.ir('pantalones')">Pantalones</button>
         <button onclick="Router.ir('gorras')">Gorras</button>
+        <button id="btn-filtros" class="btn-filtros">FILTROS ⚙️</button>
       </div>
     </div>
     <div class="shop-layout">
-      <div class="filters-wrap">
-        <button id="filters-toggle" class="filters-toggle" aria-expanded="false">FILTROS <span class="chevron">▼</span></button>
-        <aside id="filters-panel" class="filters-side closed" aria-label="Filtros">
-          <p class="idx">[ FILTROS ]</p>
-          <div class="f-group"><h4>CATEGORÍA</h4><div id="f-cats"></div></div>
-          <div class="f-group"><h4>TALLE</h4><div id="f-talles"></div></div>
-          <div class="f-group"><h4>MARCA</h4><div id="f-marcas"></div></div>
-          <div class="f-group"><h4>PRECIO</h4>
-            <div class="f-price">
-              <input id="f-min" type="number" min="0" placeholder="Mín">
-              <input id="f-max" type="number" min="0" placeholder="Máx">
-            </div>
-          </div>
-          <button class="btn-dark" onclick="limpiarFiltros()">LIMPIAR</button>
-        </aside>
-      </div>
-      <div class="shop-main">
-        <div id="productos" class="grid"></div>
-      </div>
+      <div id="productos" class="grid"></div>
     </div>
+    <div id="overlay-filtros" class="overlay-filtros"></div>
+    <aside id="panel-filtros" class="panel-filtros panel-left">
+      <div class="panel-head">
+        <h4>FILTROS</h4>
+        <button id="btn-cerrar-filtros" class="btn-cerrar-filtros">✕ CERRAR</button>
+      </div>
+      <div class="panel-body">
+        <div class="f-group"><h4>CATEGORÍA</h4><div id="f-cats"></div></div>
+        <div class="f-group"><h4>TALLE</h4><div id="f-talles"></div></div>
+        <div class="f-group"><h4>MARCA</h4><div id="f-marcas"></div></div>
+        <div class="f-group"><h4>PRECIO</h4>
+          <div class="f-price">
+            <input id="f-min" type="number" min="0" placeholder="Mín">
+            <input id="f-max" type="number" min="0" placeholder="Máx">
+          </div>
+        </div>
+      </div>
+      <div class="panel-foot">
+        <button class="btn-dark" id="btn-limpiar-filtros">LIMPIAR</button>
+        <button class="btn-light" id="btn-aplicar-filtros">APLICAR FILTROS</button>
+      </div>
+    </aside>
   </section>
 
   <!-- ===== VISTA INDIVIDUAL DE PRODUCTO (ruta ?prod=ID) ===== -->

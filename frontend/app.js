@@ -59,7 +59,7 @@ function renderFiltros() {
     checkRow("marcas", m, m, `<small>(${n(p => p.marca === m)})</small>`)).join("");
   document.getElementById("f-min").value = filtros.min;
   document.getElementById("f-max").value = filtros.max;
-  document.querySelectorAll(".filters-side input[type=checkbox]").forEach(ch =>
+  document.querySelectorAll("#panel-filtros input[type=checkbox]").forEach(ch =>
     ch.onchange = () => {
       const set = filtros[ch.dataset.grupo];
       ch.checked ? set.add(ch.value) : set.delete(ch.value);
@@ -76,14 +76,38 @@ function limpiarFiltros() {
   document.getElementById("catalogo").scrollIntoView({ behavior: "smooth" });
 }
 
-// Botón FILTROS colapsable (sidebar izquierdo)
-function initFiltrosToggle() {
-  const btn = document.getElementById("filters-toggle");
-  const panel = document.getElementById("filters-panel");
+// Panel de filtros: sidebar en desktop, drawer en móvil
+function initPanelFiltros() {
+  const btn = document.getElementById("btn-filtros");
+  const panel = document.getElementById("panel-filtros");
+  const overlay = document.getElementById("overlay-filtros");
+  const cerrar = document.getElementById("btn-cerrar-filtros");
+  const aplicar = document.getElementById("btn-aplicar-filtros");
+  const limpiar = document.getElementById("btn-limpiar-filtros");
   if (!btn || !panel) return;
-  btn.addEventListener("click", () => {
-    const open = panel.classList.toggle("open");
-    btn.setAttribute("aria-expanded", open);
+
+  function abrir() {
+    panel.classList.add("open");
+    overlay.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+  function cerrarPanel() {
+    panel.classList.remove("open");
+    overlay.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+
+  btn.addEventListener("click", abrir);
+  cerrar.addEventListener("click", cerrarPanel);
+  overlay.addEventListener("click", cerrarPanel);
+
+  limpiar.addEventListener("click", () => {
+    limpiarFiltros();
+  });
+
+  aplicar.addEventListener("click", () => {
+    cerrarPanel();
+    mostrarProductos();
   });
 }
 
@@ -450,7 +474,7 @@ function init() {
     window.__datosOK = true;
     if (window.Router) window.Router.refrescar(false);
     else if (typeof window.filtrar === "function") window.filtrar(filtroActual);
-    initFiltrosToggle(); // botón FILTROS colapsable
+    initPanelFiltros(); // nuevo panel de filtros (desktop sidebar / móvil drawer)
   });
 
   // Buscador en vivo (no toca la URL ni el historial)
