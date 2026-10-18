@@ -113,19 +113,22 @@
       </div>
     </div>
     <div class="shop-layout">
-      <aside class="filters-side" aria-label="Filtros">
-        <p class="idx">[ FILTROS ]</p>
-        <div class="f-group"><h4>CATEGORÍA</h4><div id="f-cats"></div></div>
-        <div class="f-group"><h4>TALLE</h4><div id="f-talles"></div></div>
-        <div class="f-group"><h4>MARCA</h4><div id="f-marcas"></div></div>
-        <div class="f-group"><h4>PRECIO</h4>
-          <div class="f-price">
-            <input id="f-min" type="number" min="0" placeholder="Mín">
-            <input id="f-max" type="number" min="0" placeholder="Máx">
+      <div class="filters-wrap">
+        <button id="filters-toggle" class="filters-toggle" aria-expanded="false">FILTROS <span class="chevron">▼</span></button>
+        <aside id="filters-panel" class="filters-side closed" aria-label="Filtros">
+          <p class="idx">[ FILTROS ]</p>
+          <div class="f-group"><h4>CATEGORÍA</h4><div id="f-cats"></div></div>
+          <div class="f-group"><h4>TALLE</h4><div id="f-talles"></div></div>
+          <div class="f-group"><h4>MARCA</h4><div id="f-marcas"></div></div>
+          <div class="f-group"><h4>PRECIO</h4>
+            <div class="f-price">
+              <input id="f-min" type="number" min="0" placeholder="Mín">
+              <input id="f-max" type="number" min="0" placeholder="Máx">
+            </div>
           </div>
-        </div>
-        <button class="btn-dark" onclick="limpiarFiltros()">LIMPIAR</button>
-      </aside>
+          <button class="btn-dark" onclick="limpiarFiltros()">LIMPIAR</button>
+        </aside>
+      </div>
       <div class="shop-main">
         <div id="productos" class="grid"></div>
       </div>

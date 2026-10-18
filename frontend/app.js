@@ -76,6 +76,17 @@ function limpiarFiltros() {
   document.getElementById("catalogo").scrollIntoView({ behavior: "smooth" });
 }
 
+// Botón FILTROS colapsable (sidebar izquierdo)
+function initFiltrosToggle() {
+  const btn = document.getElementById("filters-toggle");
+  const panel = document.getElementById("filters-panel");
+  if (!btn || !panel) return;
+  btn.addEventListener("click", () => {
+    const open = panel.classList.toggle("open");
+    btn.setAttribute("aria-expanded", open);
+  });
+}
+
 // Limpia el buscador (lo usa Router.catalogo antes de mostrar todo)
 function limpiarBusqueda() {
   busqueda = "";
@@ -439,6 +450,7 @@ function init() {
     window.__datosOK = true;
     if (window.Router) window.Router.refrescar(false);
     else if (typeof window.filtrar === "function") window.filtrar(filtroActual);
+    initFiltrosToggle(); // botón FILTROS colapsable
   });
 
   // Buscador en vivo (no toca la URL ni el historial)

@@ -158,9 +158,48 @@ a.btn-dark { color: #fff; } /* gana a .zone-light a */
 .card-body button:hover { background: var(--silver); }
 
 /* [03] Drop (gris medio, texto blanco) */
-/* ---- Catálogo con sidebar de filtros ---- */
-.shop-layout { display: grid; gap: 20px; grid-template-columns: 1fr; margin-top: 24px; }
-.filters-side { border: 1px solid #000; background: rgba(0,0,0,.55); padding: 16px; align-self: start; color: #fff; }
+/* ---- Filtros colapsables (sidebar izquierdo) ---- */
+.filters-wrap { position: relative; }
+.filters-toggle {
+  position: absolute;
+  left: -46px;
+  top: 0;
+  width: 44px;
+  height: 42px;
+  background: #000;
+  color: #fff;
+  border: 1px solid #000;
+  border-radius: 0 6px 6px 0;
+  font-family: var(--font-m);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  z-index: 5;
+  transition: background .2s ease, color .2s ease;
+}
+.filters-toggle:hover { background: #fff; color: #000; }
+.filters-toggle .chevron { display: inline-block; margin-left: 4px; transition: transform .2s ease; }
+.filters-toggle[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+.filters-side {
+  position: absolute;
+  top: 0;
+  left: -260px;
+  width: 260px;
+  border: 1px solid #000;
+  background: rgba(0,0,0,.55);
+  padding: 16px;
+  color: #fff;
+  transition: left .3s ease;
+  z-index: 10;
+  overflow-y: auto;
+}
+.filters-side.open { left: 0; }
 .f-group { margin-bottom: 16px; }
 .f-group h4 { font-family: var(--font-m); font-size: 12px; letter-spacing: 2px; margin: 0 0 8px; color: var(--silver); }
 .f-check { display: flex; align-items: center; gap: 8px; font-size: 13px; padding: 4px 0; cursor: pointer; }
