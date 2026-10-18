@@ -20,8 +20,12 @@
   // ---- 1. Configuración ----
   var SEGMENTOS = 6;
   var GRADOS_SEG = 360 / SEGMENTOS;
+  // Pesos brutos para sorteo ponderado (total 140 → se normaliza al 100%):
+  // 10% OFF=40 | PRÓXIMA=5 | 15% OFF=35 | SEGUÍ=5 | 20% OFF=20 | $5000=40
+  var PESOS = [40, 5, 35, 5, 20, 40]; // índice 0..5
+  var PESO_TOTAL = PESOS.reduce((a, b) => a + b, 0); // 145 (se normaliza al 100% internamente)
   // Mapa de segmentos (debe coincidir con el conic-gradient del CSS):
-  // 0:10% gana | 1:deco | 2:15% gana | 3:deco | 4:20% gana | 5:$5000 gana
+  // 0:10% gana | 1:PRÓXIMA deco | 2:15% gana | 3:SEGUÍ deco | 4:20% gana | 5:$5000 gana
   var PREMIOS = [
     { tipo: "10OFF", titulo: "10% OFF en tu próxima compra", color: "10% OFF" },
     { tipo: "NONE", titulo: "Próxima", color: "PRÓXIMA" },
@@ -30,7 +34,6 @@
     { tipo: "20OFF", titulo: "20% OFF en tu próxima compra", color: "20% OFF" },
     { tipo: "5000", titulo: "$5.000 de regalo", color: "$5000" }
   ];
-  var GANADORES = [0, 2, 4, 5]; // índices válidos: NUNCA cae en decorativos
   var LS_TS = "dr1p_spin_ts";        // timestamp del último giro (24hs)
   var LS_CLOSED = "dr1p_spin_closed"; // lo cerró → no insistir en sesión
   var MS_24H = 24 * 3600 * 1000;
@@ -147,17 +150,33 @@
     }
   }
 
-  // ---- 6. Sorteo ARREGLADO: elige ganador ANTES de animar ----
-  // Solo entre los 4 premios válidos; decorativos excluidos por diseño.
+  // ---- 6. Sorteo ponderado: elige ganador ANTES de animar ----
+  // Selecciona un segmento 0..5 con probabilidad proporcional a PESOS[].
+  // Normaliza internamente para que la suma refleje exactamente las proporciones pedidas.
   function elegirPremio() {
-    var idx = GANADORES[Math.floor(Math.random() * GANADORES.length)];
-    var base = PREMIOS[idx];
+    const r = Math.random() * PESO_TOTAL;
+    let acumulado = 0;
+    for (let i = 0; i < PESOS.length; i++) {
+      acumulado += PESOS[i];
+      if (r < acumulado) {
+        const base = PREMIOS[i];
+        return {
+          tipo: base.tipo,
+          indice: i,
+          titulo: base.titulo,
+          gana: base.tipo !== "NONE",
+          cupon: base.tipo !== "NONE" ? "PENDIENTE-" + base.tipo : null
+        };
+      }
+    }
+    // Fallback de seguridad (nunca debería llegar acá)
+    const base = PREMIOS[PESOS.length - 1];
     return {
       tipo: base.tipo,
-      indice: idx,
+      indice: PESOS.length - 1,
       titulo: base.titulo,
-      gana: true,
-      cupon: "PENDIENTE-" + base.tipo // el servidor confirma el código real
+      gana: base.tipo !== "NONE",
+      cupon: base.tipo !== "NONE" ? "PENDIENTE-" + base.tipo : null
     };
   }
 
@@ -209,7 +228,7 @@
     return p;
   }
 
-  // ---- 10. Pantalla de victoria (siempre hay premio: GANADORES) ----
+  // ---- 10. Pantalla de victoria (según premio sorteado) ----
   function mostrarVictoria() {
     girando = false;
     try { localStorage.setItem(LS_TS, String(Date.now())); } catch (e) {} // arranca las 24hs
