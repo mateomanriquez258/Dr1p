@@ -9,6 +9,11 @@
 <link rel="stylesheet" href="spinwheel.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css?family=Zalando+Sans+Expanded:400,700|Zalando+Sans:400,700|Space+Mono:400,700|Anton:400&display=swap" rel="stylesheet">
+<!-- GSAP & ScrollTrigger -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<!-- Three.js (WebGL) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
@@ -78,6 +83,26 @@
       </div>
     </div>
   </section>
+
+  <!-- ===== [THE RACK] PERCHERO DIGITAL INTERACTIVO ===== -->
+  <section id="the-rack" class="section zone-dark rack-section">
+    <div class="section-head">
+      <div>
+        <p class="idx">[ THE RACK ]</p>
+        <h2>PERCHERO DIGITAL</h2>
+      </div>
+      <button id="btn-filtros" class="btn-filtros">FILTROS ⚙️</button>
+    </div>
+    <div class="rack-container">
+      <div id="rack-canvas-wrap" class="rack-canvas-wrap">
+        <canvas id="rack-canvas"></canvas>
+      </div>
+      <div class="rack-hint">
+        Arrastá para rotar · Tocá una prenda para ver detalles
+      </div>
+    </div>
+  </section>
+
   <div class="marquee" id="marquee" aria-hidden="true">
     <div class="marquee-track">
       <span>ENVÍOS A TODO EL PAÍS · TODOS LOS MEDIOS DE PAGO · DROPS EXCLUSIVOS · STOCK LIMITADO ·&nbsp;</span>
@@ -292,6 +317,7 @@
 <script src="router.js"></script>
 <script src="preloader.js"></script>
 <script src="spinwheel.js"></script>
+<script src="rack.js"></script>
 
 <!-- ===== Modal Spin-to-Win ===== -->
 <div id="spin-overlay" class="spin-overlay" role="dialog" aria-modal="true" aria-labelledby="spin-title">
@@ -324,5 +350,31 @@
     </div>
   </section>
 </div>
+
+<!-- ===== Modal Producto (desde THE RACK) ===== -->
+<div id="product-modal" class="product-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-overlay" onclick="closeProductModal()"></div>
+  <section class="modal-card">
+    <button class="modal-close" onclick="closeProductModal()" aria-label="Cerrar">✕</button>
+    <div class="modal-body">
+      <div class="modal-img-wrap">
+        <img id="modal-img" src="" alt="">
+      </div>
+      <div class="modal-info">
+        <h2 id="modal-nombre"></h2>
+        <p id="modal-precio" class="modal-precio"></p>
+        <p id="modal-stock" class="modal-stock"></p>
+        <label class="modal-label">TALLE</label>
+        <select id="modal-talle"></select>
+        <div class="modal-actions">
+          <button class="btn-dark" id="modal-add">AGREGAR AL CARRITO</button>
+          <a class="btn-light" id="modal-wsp" target="_blank">CONSULTAR POR WHATSAPP</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="rack.js"></script>
 </body>
 </html>
