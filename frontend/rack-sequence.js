@@ -1,6 +1,6 @@
 /* =====================================================================
  * THE RACK — Visor de secuencia de fotogramas (imágenes sueltas)
- * Carga assets/frames_corteiz/frame_1.png … frame_36.png
+ * Carga assets/frames_corteiz/ezgif-frame-001.png … ezgif-frame-270.png
  * Arrastre horizontal (mouse o touch) para rotar 360° fluido.
  * Fondo negro puro #000000 y mix-blend-mode: screen para fusionarse
  * con el diseño oscuro de DR1P sin desbordar el layout.
@@ -10,14 +10,14 @@
   "use strict";
 
   // ---- Configuración ----
-  var TOTAL_FRAMES = 36;
+  var TOTAL_FRAMES = 270;
   var FRAMES_DIR = "assets/frames_corteiz/";
-  var FRAME_PREFIX = "frame_";
+  var FRAME_PREFIX = "ezgif-frame-";
   var FRAME_EXT = ".png";
   var VIEWPORT_MAX_W = 520;
   var VIEWPORT_MAX_H = 520;
-  var DRAG_SPEED = 0.08;   // frames por píxel de arrastre
-  var SMOOTH = 0.18;       // suavizado de interpolación (0-1)
+  var DRAG_SPEED = 0.06;   // frames por píxel de arrastre
+  var SMOOTH = 0.16;       // suavizado de interpolación (0-1)
 
   var canvas = document.getElementById("sequence-canvas");
   var ctx = canvas.getContext("2d");
@@ -34,30 +34,42 @@
 
   // ---- Precargar imágenes ----
   function cargarImagenes() {
+    var promesas = [];
     for (var i = 1; i <= TOTAL_FRAMES; i++) {
+      var nombre = FRAME_PREFIX + String(i).padStart(3, "0") + FRAME_EXT;
+      var url = FRAMES_DIR + nombre;
       var img = new Image();
-      img.src = FRAMES_DIR + FRAME_PREFIX + i + FRAME_EXT;
-      img.onload = onImgLoad;
-      img.onerror = onImgLoad;
+      var p = new Promise(function (resolve, reject) {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+      img.src = url;
       images.push(img);
+      promesas.push(p);
     }
-  }
-
-  function onImgLoad() {
-    loadedCount++;
-    if (loadedCount === TOTAL_FRAMES) {
-      iniciar();
-    }
+    Promise.all(promesas).then(iniciar).catch(function (e) {
+      console.error("Rack: error cargando frames", e);
+      // fallback: dibujar placeholder
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#fff";
+      ctx.font = "14px 'Space Mono', monospace";
+      ctx.textAlign = "center";
+      ctx.fillText("Frames no cargados", canvas.width / 2, canvas.height / 2);
+      ctx.fillText("assets/frames_corteiz/", canvas.width / 2, canvas.height / 2 + 20);
+    });
   }
 
   // ---- Iniciar visor ----
   function iniciar() {
-    var viewport = document.getElementById("sprite-viewport");
-    var lado = viewport ? Math.min(viewport.clientWidth, VIEWPORT_MAX_W) : 400;
+    var lado = Math.min(
+      document.getElementById("sprite-viewport").clientWidth,
+      VIEWPORT_MAX_W
+    );
     canvas.width = lado;
     canvas.height = lado;
-    if (viewport) viewport.style.width = lado + "px";
-    if (viewport) viewport.style.height = lado + "px";
+    document.getElementById("sprite-viewport").style.width = lado + "px";
+    document.getElementById("sprite-viewport").style.height = lado + "px";
 
     dibujarFrame(Math.round(currentFrame));
     loop();
