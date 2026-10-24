@@ -4,7 +4,6 @@ let carrito = []; // líneas independientes: [{ id, talle, cant }]
 let filtroActual = "todos";
 let busqueda = ""; // buscador del header (filtra en vivo, sin recargar)
 let cuponAplicado = null; // { codigo, premio: "A"|"B" }
-const DROP_DATE = new Date("2026-12-01T20:00:00-03:00").getTime(); // [03] DROP 003 = hoy + 50 días
 
 const fmt = n => n.toLocaleString("es-AR");
 
@@ -196,7 +195,7 @@ function vistaProductoVisible(on) {
   document.getElementById("producto").style.display = on ? "" : "none";
   // En PDP solo quedan header + ficha (+contacto/footer): se oculta hero,
   // marquesina y secciones de tienda
-  ["hero", "marquee", "categorias", "catalogo", "drop", "probarte", "contacto"].forEach(id => {
+  ["hero", "marquee", "categorias", "catalogo", "probarte", "contacto"].forEach(id => {
     const s = document.getElementById(id);
     if (s) s.style.display = on ? "none" : "";
   });
@@ -443,23 +442,6 @@ async function enviarContacto(e) {
   }
 }
 
-// ---- [03] Countdown del drop + suscripción early access ----
-function tickCountdown() {
-  const el = id => document.getElementById(id);
-  if (!el("cd-d")) return;
-  const diff = DROP_DATE - Date.now();
-  if (diff <= 0) {
-    document.querySelector(".drop-title").textContent = "DROP 003 — DISPONIBLE AHORA";
-    ["cd-d", "cd-h", "cd-m", "cd-s"].forEach(id => el(id).textContent = "00");
-    return;
-  }
-  const pad = n => String(n).padStart(2, "0");
-  el("cd-d").textContent = pad(Math.floor(diff / 864e5));
-  el("cd-h").textContent = pad(Math.floor(diff / 36e5) % 24);
-  el("cd-m").textContent = pad(Math.floor(diff / 6e4) % 60);
-  el("cd-s").textContent = pad(Math.floor(diff / 1e3) % 60);
-}
-
 function init() {
   // init hidrata datos y delega la ruta inicial al Router (?cat= / ?prod=)
   Promise.all([fetch("/api/productos"), fetch("/api/config")]).then(async ([pr, cfg]) => {
@@ -483,22 +465,6 @@ function init() {
     busqueda = e.target.value;
     if (typeof window.filtrar === "function") window.filtrar(filtroActual);
     document.getElementById("catalogo").scrollIntoView({ behavior: "smooth" });
-  });
-
-  // Countdown + form del drop
-  setInterval(tickCountdown, 1000); tickCountdown();
-  const df = document.getElementById("drop-form");
-  if (df) df.addEventListener("submit", e => {
-    e.preventDefault();
-    const email = document.getElementById("drop-email").value.trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return;
-    fetch("/api/leads", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, premio: "DROP", cupon: "-" })
-    }).catch(() => {});
-    document.getElementById("drop-ok").hidden = false;
-    e.target.reset();
   });
 }
 

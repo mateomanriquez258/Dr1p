@@ -265,25 +265,6 @@ a.btn-dark { color: #fff; } /* gana a .zone-light a */
 .wsp-fab:hover { transform: scale(1.08); }
 .wsp-fab svg { width: 30px; height: 30px; }
 
-/* ===== THE RACK — Perchero digital (video) ===== */
-.rack-section {
-  padding: 90px 20px 80px;
-  background: #050505;
-  color: #fff;
-}
-.rack-section .section-head { margin-bottom: 30px; }
-.rack-section .section-head h2 { font-family: "Anton", var(--font-d); font-size: clamp(28px, 5vw, 42px); letter-spacing: 3px; margin: 0 0 8px; text-transform: uppercase; }
-.rack-section .section-head .btn-filtros { margin-left: auto; }
-
-.rack-container { position: relative; max-width: 100%; margin: 0 auto; max-height: 520px; }
-.video-viewport { position: relative; width: 100%; max-width: 520px; height: auto; margin: 0 auto; aspect-ratio: 1; overflow: hidden; background: #000000; border: 1px solid #111; }
-#rack-video { width: 100%; height: 100%; display: block; cursor: pointer; background: #000000; object-fit: contain; }
-
-.rack-info { margin-top: 16px; text-align: center; }
-.rack-precio { font-family: "Anton", var(--font-d); font-size: clamp(24px, 4vw, 32px); color: #fff; font-weight: 700; margin: 0 0 10px; }
-.rack-cta { display: inline-block; background: #fff; color: #000; border: none; padding: 12px 28px; font-weight: 700; font-size: 14px; text-transform: uppercase; cursor: pointer; font-family: inherit; border-radius: 0; }
-.rack-cta:hover { background: #E5E5E5; }
-
 /* Modal producto */
 .product-modal {
   position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,.8);
@@ -363,24 +344,6 @@ a.btn-dark { color: #fff; } /* gana a .zone-light a */
 .pd-faq summary { padding: 14px; cursor: pointer; font-family: var(--font-m); font-size: 13px; letter-spacing: 1px; }
 .pd-faq details p { padding: 0 14px 14px; margin: 0; font-size: 14px; line-height: 1.6; }
 @media (min-width: 860px) { .pd-layout { grid-template-columns: 1fr 1fr; } }
-.drop { text-align: center; }
-.drop-title {
-  font-size: clamp(26px, 5vw, 46px); margin: 0 0 20px;
-  /* Letras cromadas: degradado metálico sobre el texto */
-  background: linear-gradient(180deg,
-    #ffffff 0%, #d7dade 28%, #7c8187 48%, #f2f4f6 62%, #ffffff 100%);
-  -webkit-background-clip: text; background-clip: text;
-  color: transparent;
-  filter: drop-shadow(0 2px 2px rgba(0,0,0,.55));
-}
-.count { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
-.count div { border: 1px solid #fff; padding: 14px 10px; min-width: 72px; background: rgba(0,0,0,.55); }
-.count span { font-family: var(--font-m); font-size: 30px; font-weight: 700; }
-.count small { display: block; font-family: var(--font-m); font-size: 10px; letter-spacing: 2px; color: var(--silver); }
-.drop-form { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-.drop-form input { background: #000; color: #fff; border: 1px solid #fff; padding: 12px; min-width: 240px; font-family: var(--font-m); }
-.drop-form button { background: #fff; color: #000; border: 0; padding: 12px 24px; font-weight: 700; cursor: pointer; }
-.drop-ok { font-family: var(--font-m); font-size: 13px; }
 
 /* [04-05] Showroom + contacto (gris claro, texto negro) */
 .show-card {
