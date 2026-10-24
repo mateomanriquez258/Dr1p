@@ -7,21 +7,8 @@
 <link rel="stylesheet" href="styles.css">
 <link rel="stylesheet" href="preloader.css">
 <link rel="stylesheet" href="spinwheel.css">
-<link rel="stylesheet" href="y2k.css">
-<script>
-  // Oculta lo que anima y2k.js; si Motion no carga, se muestra igual.
-  (function (d) {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    d.classList.add("js-motion");
-    setTimeout(function () { if (!d.classList.contains("motion-ready")) d.classList.remove("js-motion"); }, 4000);
-  })(document.documentElement);
-</script>
-<meta name="theme-color" content="#000000">
-<meta name="description" content="DR1P — streetwear Y2K. Remeras, pantalones y gorras de stock limitado. Envíos a todo el país.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zalando+Sans+Expanded:wght@400;700;900&family=Zalando+Sans:wght@400;700&family=Space+Mono:wght@400;700&family=Anton&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="assets/thorns-corner.png">
+<link href="https://fonts.googleapis.com/css?family=Zalando+Sans+Expanded:400,700|Zalando+Sans:400,700|Space+Mono:400,700|Anton:400&display=swap" rel="stylesheet">
 <!-- GSAP & ScrollTrigger -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -61,44 +48,13 @@
 
 <main>
   <!-- ===== HERO + MARQUEE (negro) ===== -->
-  <section class="hero y2k-hero" id="hero">
-    <div class="y2k-grain" aria-hidden="true"></div>
-    <img class="y2k-mark" src="assets/logo-gothic.jpg" alt="" aria-hidden="true">
-
-    <!-- Guirnaldas de espinas cromadas (bordes del viewport) -->
-    <div class="thorns" aria-hidden="true">
-      <div class="thorn chrome corner tl" data-depth="14"><div class="float"><img src="assets/thorns-corner.png" alt=""><i class="glint"></i></div></div>
-      <div class="thorn chrome corner tr" data-depth="18"><div class="float"><img src="assets/thorns-corner.png" alt=""><i class="glint"></i></div></div>
-      <div class="thorn chrome corner bl" data-depth="10"><div class="float"><img src="assets/thorns-corner.png" alt=""><i class="glint"></i></div></div>
-      <div class="thorn chrome corner br" data-depth="16"><div class="float"><img src="assets/thorns-corner.png" alt=""><i class="glint"></i></div></div>
-      <div class="thorn chrome band top" data-depth="8"><div class="float"><img src="assets/thorns-h.png" alt=""><i class="glint"></i></div></div>
-      <div class="thorn chrome band bottom" data-depth="6"><div class="float"><img src="assets/thorns-h.png" alt=""><i class="glint"></i></div></div>
-      <span class="spark" style="--x:6%;--y:14%;--s:22px;--d:0s"></span>
-      <span class="spark" style="--x:19%;--y:5%;--s:14px;--d:1.1s"></span>
-      <span class="spark" style="--x:91%;--y:9%;--s:26px;--d:.6s"></span>
-      <span class="spark" style="--x:79%;--y:4%;--s:12px;--d:2.2s"></span>
-      <span class="spark" style="--x:4%;--y:72%;--s:18px;--d:1.7s"></span>
-      <span class="spark" style="--x:95%;--y:66%;--s:16px;--d:2.8s"></span>
-      <span class="spark" style="--x:12%;--y:93%;--s:24px;--d:.3s"></span>
-      <span class="spark" style="--x:62%;--y:95%;--s:14px;--d:1.4s"></span>
-      <span class="spark" style="--x:88%;--y:92%;--s:20px;--d:3.1s"></span>
-      <span class="spark" style="--x:38%;--y:3%;--s:10px;--d:2.5s"></span>
-    </div>
-
+  <section class="hero" id="hero">
+    <img class="hero-bg" src="https://dcdn-us.mitiendanube.com/stores/008/356/664/media/377a1105-3e14f6b4-9ba6-40a6-ad37-acd5081586c5/source.png" alt="" onerror="this.style.display='none'">
     <div class="hero-content">
-      <p class="kicker" data-reveal>SS 26 <b>//</b> STOCK LIMITADO <b>//</b> PRENDAS EXCLUSIVAS</p>
-      <h1 class="y2k-title" aria-label="Llenate de DR1P.">
-        <span class="line">LLENATE</span>
-        <span class="line">DE DR1P.</span>
-      </h1>
-      <p class="y2k-sub" data-reveal>Streetwear underground. Drops cortos, sin reposición.</p>
-      <div class="y2k-ctas" data-reveal>
-        <a href="#catalogo" class="btn-chrome" onclick="Router.catalogo();return false;"><span>VER CATÁLOGO</span></a>
-        <button type="button" class="btn-ghost" onclick="SpinWin.abrir()"><span>GIRÁ LA RULETA →</span></button>
-      </div>
+      <p class="kicker">SS 26 - STOCK LIMITADO - PRENDAS EXCLUSIVAS</p>
+      <h1>LLENATE<br>DE DR1P.</h1>
+      <a href="#catalogo" class="btn-light" onclick="Router.catalogo();return false;">VER CATÁLOGO</a>
     </div>
-
-    <a href="#categorias" class="y2k-scroll" aria-label="Bajar a categorías"><span></span></a>
   </section>
   <!-- ===== BANNER RULETA + ENVÍOS (maquetación limpia 3 bloques) ===== -->
   <section class="ruleta-banner">
@@ -325,7 +281,6 @@
 <script src="router.js"></script>
 <script src="preloader.js"></script>
 <script src="spinwheel.js"></script>
-<script type="module" src="y2k.js"></script>
 
 <!-- ===== Modal Spin-to-Win ===== -->
 <div id="spin-overlay" class="spin-overlay" role="dialog" aria-modal="true" aria-labelledby="spin-title">
