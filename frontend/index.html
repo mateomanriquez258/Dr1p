@@ -94,11 +94,12 @@
       <button id="btn-filtros" class="btn-filtros">FILTROS ⚙️</button>
     </div>
     <div class="rack-container">
-      <div class="sprite-viewport" id="sprite-viewport">
-        <canvas id="sequence-canvas"></canvas>
+      <div class="video-viewport" id="video-viewport">
+        <video id="rack-video" autoplay loop muted playsinline></video>
       </div>
-      <div class="rack-hint">
-        Arrastá para rotar · Tocá una prenda para ver detalles
+      <div class="rack-info">
+        <p class="rack-precio">$28.990</p>
+        <button class="rack-cta btn-dark">VER REMERA BAPE</button>
       </div>
     </div>
   </section>
@@ -317,7 +318,7 @@
 <script src="router.js"></script>
 <script src="preloader.js"></script>
 <script src="spinwheel.js"></script>
-<script src="rack-sequence.js"></script>
+<script src="rack-video.js"></script>
 
 <!-- ===== Modal Spin-to-Win ===== -->
 <div id="spin-overlay" class="spin-overlay" role="dialog" aria-modal="true" aria-labelledby="spin-title">
