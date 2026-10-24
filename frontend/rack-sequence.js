@@ -11,7 +11,7 @@
 
   // ---- Configuración ----
   var TOTAL_FRAMES = 270;
-  var FRAMES_DIR = "assets/frames_corteiz/";
+  var FRAMES_DIR = "./assets/frames_corteiz/";
   var FRAME_PREFIX = "ezgif-frame-";
   var FRAME_EXT = ".png";
   var VIEWPORT_MAX_W = 520;
@@ -41,14 +41,20 @@
       var img = new Image();
       var p = new Promise(function (resolve, reject) {
         img.onload = resolve;
-        img.onerror = reject;
+        img.onerror = function () {
+          console.error("Rack: falló cargar", url);
+          reject(url);
+        };
       });
       img.src = url;
       images.push(img);
       promesas.push(p);
     }
-    Promise.all(promesas).then(iniciar).catch(function (e) {
-      console.error("Rack: error cargando frames", e);
+    // Auditar primera URL
+    var primeraURL = FRAMES_DIR + FRAME_PREFIX + String(1).padStart(3, "0") + FRAME_EXT;
+    console.log("Rack: primera imagen ->", primeraURL);
+    Promise.all(promesas).then(iniciar).catch(function (urlFallida) {
+      console.error("Rack: error cargando frames. Falló:", urlFallida);
       // fallback: dibujar placeholder
       ctx.fillStyle = "#000000";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
