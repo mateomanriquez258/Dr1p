@@ -50,9 +50,12 @@
     camera.position.set(0, 0.5, 7);
 
     // Renderer
-    renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("rack-canvas"), antialias: true, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight > 400 ? window.innerHeight : 400);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    var canvasEl = document.getElementById("rack-canvas");
+    var wrapW = canvasEl.parentElement.clientWidth || 600;
+    var wrapH = canvasEl.parentElement.clientHeight || 400;
+    renderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true, alpha: true });
+    renderer.setSize(wrapW, wrapH);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.shadowMap.enabled = true;
 
     // Luces
@@ -171,11 +174,13 @@
   }
 
   function onResize() {
-    var w = window.innerWidth;
-    var h = window.innerHeight;
-    camera.aspect = w / h;
+    var canvasEl = document.getElementById("rack-canvas");
+    if (!canvasEl) return;
+    var wrapW = canvasEl.parentElement.clientWidth || 600;
+    var wrapH = canvasEl.parentElement.clientHeight || 400;
+    camera.aspect = wrapW / wrapH;
     camera.updateProjectionMatrix();
-    renderer.setSize(w, h > 400 ? h : 400);
+    renderer.setSize(wrapW, wrapH);
   }
 
   // ---- Animación ----

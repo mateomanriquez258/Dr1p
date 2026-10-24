@@ -14,8 +14,10 @@
   --font-m: "Space Mono", ui-monospace, monospace;
 }
 * { box-sizing: border-box; }
-body {
-  margin: 0; font-family: var(--font-d);
+html, body {
+  margin: 0; padding: 0;
+  overflow-x: hidden;
+  font-family: var(--font-d);
   background: #000; /* base negra: hero y marquesina quedan limpios */
   color: #fff;
 }
@@ -269,8 +271,8 @@ a.btn-dark { color: #fff; } /* gana a .zone-light a */
 .rack-section .section-head h2 { font-family: "Anton", var(--font-d); font-size: clamp(28px, 5vw, 42px); letter-spacing: 3px; margin: 0 0 8px; text-transform: uppercase; }
 .rack-section .section-head .btn-filtros { margin-left: auto; }
 
-.rack-container { position: relative; max-width: 900px; margin: 0 auto; height: 520px; }
-.rack-canvas-wrap { width: 100%; height: 100%; position: relative; }
+.rack-container { position: relative; max-width: 100%; margin: 0 auto; max-height: 420px; }
+.rack-canvas-wrap { width: 100%; height: 100%; position: relative; max-height: 420px; overflow: hidden; }
 .rack-canvas-wrap canvas { width: 100%; height: 100%; display: block; cursor: grab; background: #000; }
 .rack-hint {
   position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
