@@ -1,342 +1,85 @@
 <!DOCTYPE html>
-<html lang="es-AR">
+<html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DR1P STORE — Streetwear</title>
-<link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="preloader.css">
-<link rel="stylesheet" href="spinwheel.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css?family=Zalando+Sans+Expanded:400,700|Zalando+Sans:400,700|Space+Mono:400,700|Anton:400&display=swap" rel="stylesheet">
-<!-- GSAP & ScrollTrigger -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<!-- Three.js (WebGL) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DR1P — Y2K Streetwear</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./y2k.css">
 </head>
-<body>
-
-<!-- ===== PRELOADER DR1P (decodificador → marca) ===== -->
-<div id="preloader" class="preloader" aria-hidden="true">
-  <div id="pre-slot" class="slot-brand"></div>
-  <div class="pre-bar"><i id="pre-fill"></i></div>
-  <p class="pre-hint">INICIANDO DR1P…</p>
-</div>
-
-<!-- ===== HEADER (zona negra) ===== -->
-<header class="nav">
-  <div class="nav-inner">
-    <!-- Header Logo -->
-    <a href="/" class="logo-link" onclick="Router.home();return false;">
-      <img src="assets/logo.png" alt="DR1P" class="header-logo" />
-    </a>
-    <nav class="nav-links">
-      <a href="#" data-cat="todos" onclick="Router.inicio();return false;">INICIO</a>
-      <a href="?cat=remeras" data-cat="remeras" onclick="Router.ir('remeras');return false;">REMERAS</a>
-      <a href="?cat=pantalones" data-cat="pantalones" onclick="Router.ir('pantalones');return false;">PANTALONES</a>
-      <a href="?cat=gorras" data-cat="gorras" onclick="Router.ir('gorras');return false;">GORRAS</a>
-      <a href="#drop">DROP</a>
-      <a href="#contacto">CONTACTO</a>
-    </nav>
-    <div class="nav-tools">
-      <input id="nav-search" type="search" placeholder="BUSCAR…" aria-label="Buscar">
-      <button class="cart-btn" onclick="toggleCart()">🛒 <span id="count">0</span></button>
-    </div>
-  </div>
-</header>
-
-<main>
-  <!-- ===== HERO + MARQUEE (negro) ===== -->
-  <section class="hero" id="hero">
-    <img class="hero-bg" src="https://dcdn-us.mitiendanube.com/stores/008/356/664/media/377a1105-3e14f6b4-9ba6-40a6-ad37-acd5081586c5/source.png" alt="" onerror="this.style.display='none'">
-    <div class="hero-content">
-      <p class="kicker">SS 26 - STOCK LIMITADO - PRENDAS EXCLUSIVAS</p>
-      <h1>LLENATE<br>DE DR1P.</h1>
-      <a href="#catalogo" class="btn-light" onclick="Router.catalogo();return false;">VER CATÁLOGO</a>
-    </div>
-  </section>
-  <!-- ===== BANNER RULETA + ENVÍOS (maquetación limpia 3 bloques) ===== -->
-  <section class="ruleta-banner">
-    <div class="rb-grid">
-      <div class="rb-text">
-        <p class="rb-kicker">GIRÁ LA RULETA Y</p>
-        <h2 class="rb-title">GANÁ<br>DESCUENTOS</h2>
-        <p class="rb-sub">¡Cada giro puede ser tuyo!</p>
-        <button class="rb-btn" onclick="SpinWin.abrir()">GIRAR AHORA →</button>
+<body class="js-motion">
+  <!-- Header / Nav -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a href="./" class="logo-link"><img src="./logo.png" alt="DR1P" class="header-logo"></a>
+      <nav class="nav-links">
+        <a href="#inicio" class="active">INICIO</a>
+        <a href="#remeras">REMERAS</a>
+        <a href="#pantalones">PANTALONES</a>
+        <a href="#gorras">GORRAS</a>
+        <a href="#drop">DROP</a>
+        <a href="#contacto">CONTACTO</a>
+      </nav>
+      <div class="nav-tools">
+        <input type="text" id="nav-search" placeholder="BUSCAR...">
+        <button class="cart-btn" onclick="toggleCart()">🛒 <span id="count">0</span></button>
       </div>
-      <div class="rb-wheel" aria-hidden="true">
-        <div class="rb-wheel-in">
-          <span style="transform:translate(-50%,-50%) rotate(30deg) translateY(-72px) rotate(-30deg)">10% OFF</span>
-          <span style="transform:translate(-50%,-50%) rotate(90deg) translateY(-72px) rotate(-90deg)">PRÓXIMA</span>
-          <span style="transform:translate(-50%,-50%) rotate(150deg) translateY(-72px) rotate(-150deg)">15% OFF</span>
-          <span style="transform:translate(-50%,-50%) rotate(210deg) translateY(-72px) rotate(-210deg)">SEGUÍ</span>
-          <span style="transform:translate(-50%,-50%) rotate(270deg) translateY(-72px) rotate(-270deg)">20% OFF</span>
-          <span style="transform:translate(-50%,-50%) rotate(330deg) translateY(-72px) rotate(-330deg)">$5000</span>
-        </div>
-      </div>
-      <div class="rb-ship">
-        <svg viewBox="0 0 64 40" aria-hidden="true"><g fill="none" stroke="#fff" stroke-width="2.5"><rect x="2" y="8" width="34" height="20"/><path d="M36 14h12l8 8v6H36z"/><circle cx="14" cy="32" r="4"/><circle cx="46" cy="32" r="4"/></g></svg>
-        <p class="rb-kicker">ENVÍOS A TODO EL PAÍS</p>
-        <p class="rb-price">GRATIS A PARTIR DE $120.000</p>
-        <a href="#contacto">VER CONDICIONES →</a>
+    </div>
+  </header>
+
+  <!-- Hero con Espinas y Título Y2K -->
+  <section id="inicio" class="y2k-hero">
+    <div class="y2k-grain"></div>
+    <div class="thorns">
+      <div class="thorn corner tl" data-depth="14"><div class="float"><img src="./thorn.png" alt=""><div class="glint"></div></div></div>
+      <div class="thorn corner tr" data-depth="14"><div class="float"><img src="./thorn.png" alt=""><div class="glint"></div></div></div>
+      <div class="thorn corner bl" data-depth="14"><div class="float"><img src="./thorn.png" alt=""><div class="glint"></div></div></div>
+      <div class="thorn corner br" data-depth="14"><div class="float"><img src="./thorn.png" alt=""><div class="glint"></div></div></div>
+      <div class="thorn band top" data-depth="8"><div class="float"><img src="./barbed-band.png" alt=""><div class="glint"></div></div></div>
+      <div class="thorn band bottom" data-depth="8"><div class="float"><img src="./barbed-band.png" alt=""><div class="glint"></div></div></div>
+    </div>
+    <div class="hero-content" data-reveal>
+      <p class="kicker"><b>SS 26</b> // STOCK LIMITADO // PRENDAS EXCLUSIVAS</p>
+      <h1 class="y2k-title">
+        <span class="line">LLENATE</span>
+        <span class="line">DE DR1P.</span>
+      </h1>
+      <p class="y2k-sub">Streetwear underground. Drops cortos, sin reposición.</p>
+      <div class="y2k-ctas">
+        <a href="#catalogo" class="btn-chrome"><span>VER CATÁLOGO</span></a>
+        <a href="#probarte" class="btn-ghost"><span>GIRÁ LA RULETA -</span></a>
       </div>
     </div>
   </section>
 
-  <div class="marquee" id="marquee" aria-hidden="true">
-    <div class="marquee-track">
-      <span>ENVÍOS A TODO EL PAÍS · TODOS LOS MEDIOS DE PAGO · DROPS EXCLUSIVOS · STOCK LIMITADO ·&nbsp;</span>
-      <span>ENVÍOS A TODO EL PAÍS · TODOS LOS MEDIOS DE PAGO · DROPS EXCLUSIVOS · STOCK LIMITADO ·&nbsp;</span>
-    </div>
-  </div>
-
-  <!-- El gradiente inicia ESTRICTAMENTE debajo de la marquesina -->
-  <div class="page-grad">
-
-  <!-- ===== [01] CATEGORÍAS (gris oscuro) ===== -->
-  <section id="categorias" class="section zone-dark">
-    <p class="idx">[ 01 // CATEGORÍAS ]</p>
-    <div class="cat-grid">
-      <a class="cat-card" href="?cat=remeras" onclick="Router.ir('remeras');return false;"><span class="cat-n">01</span><h2>REMERAS</h2><p>BOXYFIT / OVERSIZE →</p></a>
-      <a class="cat-card" href="?cat=pantalones" onclick="Router.ir('pantalones');return false;"><span class="cat-n">02</span><h2>PANTALONES</h2><p>BAGGY / SHORT →</p></a>
-      <a class="cat-card" href="?cat=gorras" onclick="Router.ir('gorras');return false;"><span class="cat-n">03</span><h2>GORRAS</h2><p>NEW ERA FITTED →</p></a>
-    </div>
-  </section>
-
-  <!-- ===== [02] CATÁLOGO (gris medio) ===== -->
+  <!-- Catálogo y Secciones -->
   <section id="catalogo" class="section zone-mid">
-    <div class="section-head">
-      <div>
-        <p class="idx">[ 02 // CATÁLOGO ]</p>
-        <h2 id="titulo-categoria">[ CATÁLOGO // TODOS ]</h2>
-      </div>
-      <div class="filters">
-        <button onclick="Router.ir('todos')">Todos</button>
-        <button onclick="Router.ir('remeras')">Remeras</button>
-        <button onclick="Router.ir('pantalones')">Pantalones</button>
-        <button onclick="Router.ir('gorras')">Gorras</button>
-        <button id="btn-filtros" class="btn-filtros">FILTROS ⚙️</button>
-      </div>
+    <h2 id="titulo-categoria">[ CATÁLOGO // TODOS ]</h2>
+    <div class="filters">
+      <button class="active" onclick="filtrar('todos')">TODOS</button>
+      <button onclick="filtrar('remeras')">REMERAS</button>
+      <button onclick="filtrar('pantalones')">PANTALONES</button>
+      <button onclick="filtrar('gorras')">GORRAS</button>
     </div>
-    <div class="shop-layout">
-      <div id="productos" class="grid"></div>
-    </div>
-    <div id="overlay-filtros" class="overlay-filtros"></div>
-    <aside id="panel-filtros" class="panel-filtros panel-left">
-      <div class="panel-head">
-        <h4>FILTROS</h4>
-        <button id="btn-cerrar-filtros" class="btn-cerrar-filtros">✕ CERRAR</button>
-      </div>
-      <div class="panel-body">
-        <div class="f-group"><h4>CATEGORÍA</h4><div id="f-cats"></div></div>
-        <div class="f-group"><h4>TALLE</h4><div id="f-talles"></div></div>
-        <div class="f-group"><h4>MARCA</h4><div id="f-marcas"></div></div>
-        <div class="f-group"><h4>PRECIO</h4>
-          <div class="f-price">
-            <input id="f-min" type="number" min="0" placeholder="Mín">
-            <input id="f-max" type="number" min="0" placeholder="Máx">
-          </div>
-        </div>
-      </div>
-      <div class="panel-foot">
-        <button class="btn-dark" id="btn-limpiar-filtros">LIMPIAR</button>
-        <button class="btn-light" id="btn-aplicar-filtros">APLICAR FILTROS</button>
-      </div>
-    </aside>
+    <div id="productos" class="grid"></div>
   </section>
 
-  <!-- ===== VISTA INDIVIDUAL DE PRODUCTO (ruta ?prod=ID) ===== -->
-  <section id="producto" class="section zone-mid" style="display:none">
-    <button class="btn-volver" onclick="Router.volver()">← VOLVER</button>
-    <div class="pd-layout">
-      <div class="pd-gallery">
-        <span class="free-tag">Envío gratis en compras a partir de $120.000</span>
-        <img id="pd-img" src="" alt="Producto">
-        <div id="pd-thumbs" class="pd-thumbs"></div>
-      </div>
-      <div class="pd-info">
-        <p id="pd-cat" class="idx"></p>
-        <h2 id="pd-nombre"></h2>
-        <p id="pd-precio" class="pd-price"></p>
-        <p class="pd-envio">Envío gratis en compras a partir de $120.000</p>
-        <p id="pd-stock" class="pd-stock"></p>
-        <label class="pd-label">TALLE
-          <select id="pd-talle"></select>
-        </label>
-        <label class="pd-label" id="pd-color-wrap">COLOR
-          <select id="pd-color-sel" style="display:none"></select>
-          <span id="pd-color-fijo"></span>
-        </label>
-        <div class="pd-qty">
-          <span>CANTIDAD</span>
-          <div>
-            <button onclick="pdQty(-1)">-</button>
-            <span id="pd-cant">1</span>
-            <button onclick="pdQty(1)">+</button>
-          </div>
-        </div>
-        <button class="btn-light" onclick="pdAgregar()">AGREGAR AL CARRITO</button>
-        <p id="pd-desc" class="pd-desc"></p>
-      </div>
-    </div>
-    <div class="pd-faq">
-      <p class="idx">[ FAQ // PREGUNTAS FRECUENTES ]</p>
-      <details><summary>CAMBIOS Y DEVOLUCIONES</summary><p>Aceptamos cambios dentro de los 7 días con la prenda sin uso y con etiqueta. Escribinos por WhatsApp con tu nombre y coordinamos.</p></details>
-      <details><summary>TIEMPOS DE ENVÍO</summary><p>Hacemos envíos a todo el país. El despacho se coordina por WhatsApp al confirmar tu pedido, generalmente dentro de las 24/48hs.</p></details>
-      <details><summary>CUIDADOS DE LAVADO</summary><p>Lavar con agua fría y del revés, no usar secadora ni lavandina. Así el estampado y la tela duran mucho más.</p></details>
-      <details><summary>SEGUIMIENTO DE MI PEDIDO</summary><p>Escribinos por WhatsApp con tu nombre y te pasamos el estado y el seguimiento de tu compra.</p></details>
-    </div>
-    <p class="idx">[ SIMILARES // SEGUÍ EXPLORANDO ]</p>
-    <div id="pd-similares" class="grid"></div>
-  </section>
-
-  <!-- ===== [04] PROBATE (gris claro) ===== -->
-  <section id="probarte" class="section zone-light">
-    <p class="idx">[ 04 // PROBATE ]</p>
-    <div class="show-card">
-      <div>
-        <h2>¡CONTACTANOS PARA PROBARTE!</h2>
-        <p>¿DUDÁS EL TALLE? ESCRIBINOS Y COORDINAMOS<br>PARA QUE TE PRUEBES ANTES DE COMPRAR.</p>
-      </div>
-      <a class="btn-dark" href="https://wa.me/5492993244379?text=Hola%20DR1P%2C%20quiero%20probarme%20antes%20de%20comprar" target="_blank">QUIERO PROBARME</a>
-    </div>
-  </section>
-
-  <section id="contacto" class="section zone-light">
-    <p class="idx">[ 05 // CONTACTO ]</p>
-    <div class="contacto-grid">
-      <div class="contacto-info">
-        <p>📲 <a href="https://wa.me/5492993244379" target="_blank">5492993244379</a></p>
-        <p>📞 <a href="tel:2993244379">2993244379</a></p>
-        <p>✉️ <a href="mailto:dr1p.contacto.arg@gmail.com">dr1p.contacto.arg@gmail.com</a></p>
-        <p>📸 <a href="https://www.instagram.com/dr1p.tm?srtk=NWdqM2lseDJzbXdr" target="_blank">@dr1p.tm</a></p>
-      </div>
-      <form class="contacto-form" onsubmit="enviarContacto(event)">
-        <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off">
-        <input id="c-nombre" placeholder="Nombre" required>
-        <input id="c-email" type="email" placeholder="Email" required>
-        <input id="c-tel" placeholder="Teléfono" required>
-        <textarea id="c-msg" placeholder="Mensaje" rows="4" required></textarea>
-        <button type="submit" class="btn-dark">Enviar</button>
-        <p id="c-ok" class="ok-msg" style="display:none">¡Mensaje enviado!</p>
-      </form>
-    </div>
-  </section>
-  </div><!-- /page-grad -->
-</main>
-
-<!-- ===== FOOTER (blanco) ===== -->
-<footer class="footer">
-  <div class="foot-grid">
-    <div>
-      <p class="foot-t">NAVEGACIÓN</p>
-      <a href="#" onclick="Router.inicio();return false;">Inicio</a>
-      <a href="?cat=remeras" onclick="Router.ir('remeras');return false;">Remeras</a>
-      <a href="?cat=pantalones" onclick="Router.ir('pantalones');return false;">Pantalones</a>
-      <a href="?cat=gorras" onclick="Router.ir('gorras');return false;">Gorras</a>
-    </div>
-    <div>
-      <p class="foot-t">REDES</p>
-      <a href="https://www.instagram.com/dr1p.tm?srtk=NWdqM2lseDJzbXdr" target="_blank">Instagram</a>
-      <a href="https://wa.me/5492993244379" target="_blank">WhatsApp</a>
-      <a href="mailto:dr1p.contacto.arg@gmail.com">Email</a>
-    </div>
-    <div>
-      <p class="foot-t">PAGOS</p>
-      <span>EFECTIVO</span><span>TODOS LOS MEDIOS DE PAGO</span>
-    </div>
-  </div>
-</footer>
-<a class="wsp-fab" href="https://wa.me/5492993244379?text=Hola%20DR1P%2C%20quer%C3%ADa%20consultar%20por%20un%20producto" target="_blank" aria-label="Consultar por WhatsApp">
-  <svg viewBox="0 0 448 512" aria-hidden="true"><path fill="currentColor" d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
-</a>
-
-<!-- ===== CARRITO ===== -->
-<aside id="cart-drawer" class="cart-drawer">
-  <div class="cart-head">
-    <h3>Carrito de compras</h3>
+  <!-- Carrito Drawer -->
+  <div id="cart-drawer" class="drawer">
     <button onclick="toggleCart()">✕</button>
+    <h2>CARRITO</h2>
+    <div id="carrito"></div>
+    <div id="descuento-line" style="display:none">Descuento: $<span id="descuento">0</span></div>
+    <div>Total: $<span id="total-final">0</span></div>
+    <input type="text" id="cupon" placeholder="Cupón de descuento">
+    <button onclick="aplicarCupon()">Aplicar Cupón</button>
+    <input type="text" id="nombre" placeholder="Tu nombre">
+    <button onclick="enviarWhatsApp()">Comprar por WhatsApp</button>
   </div>
-  <div id="carrito" class="cart-items"></div>
-  <div class="cart-foot">
-    <p>Subtotal: $<span id="total">0</span></p>
-    <div class="coupon-row">
-      <input id="cupon" placeholder="Cupón (1 por pedido)">
-      <button onclick="aplicarCupon()">Aplicar</button>
-      <button onclick="quitarCupon()" title="Quitar cupón">✕</button>
-    </div>
-    <p id="cupon-msg" class="ok-msg" style="display:none"></p>
-    <p id="descuento-line" style="display:none">Descuento: -$<span id="descuento">0</span></p>
-    <p><strong>Total: $<span id="total-final">0</span></strong></p>
-    <p class="ok-msg">Coordinamos el envío por WhatsApp</p>
-    <input id="nombre" placeholder="Tu nombre">
-    <button class="btn-wsp" onclick="enviarWhatsApp()">Finalizar por WhatsApp</button>
-    <button class="btn-link" onclick="toggleCart()">Ver más productos</button>
-  </div>
-</aside>
-<div id="overlay" class="overlay" onclick="toggleCart()"></div>
+  <div id="overlay" onclick="toggleCart()"></div>
 
-<script src="app.js"></script>
-<script src="router.js"></script>
-<script src="preloader.js"></script>
-<script src="spinwheel.js"></script>
-
-<!-- ===== Modal Spin-to-Win ===== -->
-<div id="spin-overlay" class="spin-overlay" role="dialog" aria-modal="true" aria-labelledby="spin-title">
-  <section class="spin-modal">
-    <button id="spin-close" class="spin-close" aria-label="Cerrar">✕</button>
-    <h2 id="spin-title">¡Girá y ganá!</h2>
-    <p id="spin-sub" class="spin-sub">Dejanos tu email y probá suerte: hasta 20% OFF o $5.000.</p>
-    <div id="spin-stage" class="spin-stage">
-      <div class="spin-pointer">🔻</div>
-      <div id="spin-wheel" class="spin-wheel"><div id="spin-labels"></div></div>
-    </div>
-    <div id="spin-form-box">
-      <form class="spin-form" action="https://formspree.io/f/xaeqdvol" method="POST" onsubmit="return false;">
-        <input id="spin-email" name="email" type="email" placeholder="tu@email.com" autocomplete="email">
-        <span id="spin-error" class="spin-error"></span>
-        <button id="btn-spin" type="button" class="spin-btn" disabled>Girar la ruleta</button>
-        <small class="spin-small">Al girar aceptás suscribirte al newsletter de Dr1p.tm.</small>
-      </form>
-    </div>
-    <div id="spin-win" class="spin-win">
-      <div id="win-prize" class="spin-prize"></div>
-      <div id="win-coupon" class="spin-coupon"></div>
-      <p id="win-info" class="spin-small"></p>
-      <button id="btn-copy" class="spin-btn">Copiar mi cupón</button>
-      <button id="btn-win-close" class="btn-link">Seguir comprando</button>
-    </div>
-    <div id="spin-cool" class="spin-cool">
-      <div id="cool-msg" class="spin-cool-msg"></div>
-      <button id="btn-cool-close" class="btn-link">Seguir comprando</button>
-    </div>
-  </section>
-</div>
-
-<!-- ===== Modal Producto (desde THE RACK) ===== -->
-<div id="product-modal" class="product-modal" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="modal-overlay" onclick="closeProductModal()"></div>
-  <section class="modal-card">
-    <button class="modal-close" onclick="closeProductModal()" aria-label="Cerrar">✕</button>
-    <div class="modal-body">
-      <div class="modal-img-wrap">
-        <img id="modal-img" src="" alt="">
-      </div>
-      <div class="modal-info">
-        <h2 id="modal-nombre"></h2>
-        <p id="modal-precio" class="modal-precio"></p>
-        <p id="modal-stock" class="modal-stock"></p>
-        <label class="modal-label">TALLE</label>
-        <select id="modal-talle"></select>
-        <div class="modal-actions">
-          <button class="btn-dark" id="modal-add">AGREGAR AL CARRITO</button>
-          <a class="btn-light" id="modal-wsp" target="_blank">CONSULTAR POR WHATSAPP</a>
-        </div>
-      </div>
-    </div>
-  </section>
-</div>
-
+  <!-- Scripts -->
+  <script src="./app.js"></script>
+  <script type="module" src="./y2k.js"></script>
 </body>
 </html>
