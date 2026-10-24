@@ -271,9 +271,9 @@ a.btn-dark { color: #fff; } /* gana a .zone-light a */
 .rack-section .section-head h2 { font-family: "Anton", var(--font-d); font-size: clamp(28px, 5vw, 42px); letter-spacing: 3px; margin: 0 0 8px; text-transform: uppercase; }
 .rack-section .section-head .btn-filtros { margin-left: auto; }
 
-.rack-container { position: relative; max-width: 100%; margin: 0 auto; max-height: 420px; }
-.rack-canvas-wrap { width: 100%; height: 100%; position: relative; max-height: 420px; overflow: hidden; }
-.rack-canvas-wrap canvas { width: 100%; height: 100%; display: block; cursor: grab; background: #000; }
+.rack-container { position: relative; max-width: 100%; margin: 0 auto; max-height: 560px; }
+.sprite-viewport { position: relative; width: 100%; max-width: 520px; height: auto; margin: 0 auto; aspect-ratio: 1; overflow: hidden; background: #050505; border: 1px solid #111; }
+#sprite-canvas { width: 100%; height: 100%; display: block; cursor: grab; background: #050505; }
 .rack-hint {
   position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
   font-family: var(--font-m); font-size: 12px; letter-spacing: 2px; color: var(--silver);
