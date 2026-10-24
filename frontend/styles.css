@@ -272,8 +272,8 @@ a.btn-dark { color: #fff; } /* gana a .zone-light a */
 .rack-section .section-head .btn-filtros { margin-left: auto; }
 
 .rack-container { position: relative; max-width: 100%; margin: 0 auto; max-height: 560px; }
-.sprite-viewport { position: relative; width: 100%; max-width: 520px; height: auto; margin: 0 auto; aspect-ratio: 1; overflow: hidden; background: #050505; border: 1px solid #111; }
-#sprite-canvas { width: 100%; height: 100%; display: block; cursor: grab; background: #050505; }
+.sprite-viewport { position: relative; width: 100%; max-width: 520px; height: auto; margin: 0 auto; aspect-ratio: 1; overflow: hidden; background: #000000; border: 1px solid #111; }
+#sequence-canvas { width: 100%; height: 100%; display: block; cursor: grab; background: #000000; mix-blend-mode: screen; }
 .rack-hint {
   position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
   font-family: var(--font-m); font-size: 12px; letter-spacing: 2px; color: var(--silver);
