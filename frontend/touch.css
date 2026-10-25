@@ -1,0 +1,185 @@
+/* =====================================================================
+ * DR1P — touch.css · ajustes táctiles + contraste
+ * Se carga DESPUÉS de y2k.css. Corrige, no rediseña: misma paleta cromada.
+ *   · Objetivo táctil mínimo 44×44 px (48 px en acciones primarias)
+ *   · Texto ≥ 4.5:1 y bordes/íconos de controles ≥ 3:1
+ *   · Foco de teclado visible sobre fondo claro y oscuro
+ * ===================================================================== */
+
+:root {
+  --tap: 44px;
+  --tap-lg: 48px;
+  --wsp: #25D366;
+  /* Cromo con las bandas claras recortadas: texto blanco ≥ 6:1 durante toda la animación */
+  --chrome-dark: linear-gradient(135deg, #050506 0%, #1b1d21 20%, #5b6068 36%, #141519 50%, #050506 62%, #3f434a 80%, #0b0c0e 100%);
+  /* Cromo con las bandas oscuras recortadas: texto sobre fondo negro (≥ 8:1) */
+  --chrome-light: linear-gradient(90deg, #9ea3ab 0%, #ffffff 25%, #b8bcc3 50%, #ffffff 75%, #9ea3ab 100%);
+}
+
+html { -webkit-text-size-adjust: 100%; }
+a, button, select, summary, label, input[type="checkbox"] { touch-action: manipulation; }
+
+/* ---------- FOCO DE TECLADO ---------- */
+:focus-visible { outline: 3px solid #0a0a0a; outline-offset: 3px; }
+.card :focus-visible, .cat-card:focus-visible, .rb-ship :focus-visible,
+.cart-drawer :focus-visible, .panel-filtros :focus-visible,
+.spin-modal :focus-visible, .product-modal :focus-visible { outline-color: #fff; }
+.nav-tools input:focus-visible { outline: 3px solid #0a0a0a; outline-offset: 2px; }
+
+/* ---------- NAV ---------- */
+.nav-inner { gap: 8px 16px; }
+.nav-links a { display: inline-flex; align-items: center; min-height: var(--tap); padding: 0 4px; }
+/* 16px evita el zoom automático de iOS al enfocar el buscador */
+.nav-tools input { min-height: var(--tap); padding: 0 12px; font-size: 16px; border-width: 2px; }
+.cart-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-width: var(--tap); min-height: var(--tap); padding: 0 16px; font-size: 16px;
+  background-image: var(--chrome-dark); text-shadow: none;
+}
+
+@media (max-width: 720px) {
+  /* Fila 1: logo + buscador + carrito. Fila 2: links en una sola tira deslizable. */
+  .nav-inner { padding-block: 6px; }
+  .nav-tools { flex: 1 1 0; min-width: 0; }
+  .nav-tools input { flex: 1; min-width: 0; }
+  .nav-links {
+    order: 3; flex: 1 0 100%; flex-wrap: nowrap; gap: 4px;
+    overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-links a { flex: 0 0 auto; padding: 0 10px; }
+}
+
+/* ---------- HERO / BOTONES PRINCIPALES ---------- */
+.y2k-hero .kicker { font-size: 12px; }
+.btn-chrome, .btn-ghost, .rb-btn { min-height: var(--tap-lg); }
+/* El relleno cromado del hover tenía bandas casi blancas bajo texto blanco (1.1:1) */
+.btn-chrome::before { background-image: var(--chrome-dark); }
+.btn-chrome:hover { text-shadow: none; }
+.rb-btn, .rb-btn:hover { background-image: var(--chrome-dark); text-shadow: none; }
+.btn-light, .btn-dark {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: var(--tap-lg); text-align: center;
+}
+.y2k-scroll { box-shadow: inset 0 0 0 2px #0a0a0a; }
+.y2k-scroll::before { content: ""; position: absolute; inset: -8px -14px; } /* zona de toque ampliada */
+
+/* Marquesina: sobre el degradé de la página el texto cromado desaparecía por tramos.
+   Fondo negro + cromo claro = legible en todo el recorrido. (Opcional: borrar este bloque la revierte.) */
+.marquee { background: #050505; border-color: #050505; }
+.marquee-track span { background-image: var(--chrome-light); }
+
+/* ---------- FILTROS / BOTONES SECUNDARIOS ---------- */
+.filters button, .btn-filtros {
+  min-height: var(--tap); padding: 0 16px;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.panel-head button, .btn-volver, .cart-head button { min-width: var(--tap); min-height: var(--tap); }
+.panel-head button { padding: 0 14px; }
+.btn-volver { padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; }
+.cart-head button { font-size: 20px; }
+.f-check { min-height: var(--tap); padding: 0; gap: 12px; font-size: 14px; }
+.f-check input { width: 22px; height: 22px; flex: 0 0 auto; }
+.f-price input { min-height: var(--tap); font-size: 16px; }
+.panel-foot button { min-height: var(--tap-lg); }
+
+/* ---------- CARDS DE PRODUCTO ---------- */
+.card-media { display: block; color: inherit; text-decoration: none; }
+.card-body h3 a { color: inherit; text-decoration: none; }
+.card-body h3 a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.card-body button { min-height: var(--tap-lg); font-size: 13px; }
+.card-body button:hover { background: var(--chrome-dark); color: #fff; text-shadow: none; }
+.card .stock.agotado {
+  align-self: flex-start; padding: 2px 8px; border: 1px solid #fff;
+  color: #fff; font-weight: 700; letter-spacing: .14em;
+}
+.card-body button:disabled, .card-body button:disabled:hover {
+  background: #2a2a2d; color: #d0d2d6; text-shadow: none; cursor: not-allowed; letter-spacing: normal;
+}
+.grid-msg {
+  grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+  margin: 0; font-family: var(--font-m); font-size: 14px;
+}
+.grid-msg p { flex: 1 0 100%; margin: 0; }
+
+/* ---------- VISTA INDIVIDUAL ---------- */
+.pd-qty { gap: 12px; }
+.pd-qty button { width: var(--tap); height: var(--tap); }
+.pd-label select { min-height: var(--tap); font-size: 16px; }
+.pd-info .btn-light { min-width: 240px; }
+.pd-info .btn-light:disabled { background: #d9dadd; color: #4a4d52; cursor: not-allowed; }
+.pd-thumb { padding: 0; border: 0; background: none; cursor: pointer; }
+/* La galería es negra: el borde negro de la miniatura elegida no se veía (1.06:1) */
+.pd-thumbs img.sel { border-color: #fff; }
+/* FAQ: blanco sobre negro al 45% encima de blanco daba 3.4:1 */
+.zone-mid .pd-faq details, .zone-light .pd-faq details { background: #0a0a0a; color: #fff; }
+.pd-faq summary { padding: 15px 14px; }
+.free-tag { font-size: 12px; }
+
+@media (max-width: 600px) {
+  .pd-info .btn-light { width: 100%; }
+}
+
+/* ---------- CARRITO ---------- */
+.cart-foot input, .cart-foot select, .item select { min-height: var(--tap); font-size: 16px; }
+.coupon-row button { min-width: var(--tap); min-height: var(--tap); }
+.item-qty { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.item-qty span { min-width: 1.5em; text-align: center; font-weight: 700; }
+.item-qty button, .item-del {
+  min-width: var(--tap); min-height: var(--tap); border: 0;
+  font-size: 18px; font-weight: 700; cursor: pointer;
+}
+.item-qty button { background: #fff; color: #000; }
+.item-del { background: transparent; color: #fff; border: 1px solid #fff; align-self: flex-start; }
+/* Blanco sobre #25D366 = 1.98:1. Negro sobre el mismo verde = 10.6:1 */
+.btn-wsp { min-height: 52px; background: var(--wsp); color: #000; font-weight: 800; }
+.btn-link { min-height: var(--tap); }
+
+/* ---------- CONTACTO / FOOTER ---------- */
+.foot-grid a { display: flex; align-items: center; min-height: var(--tap); margin: 0; }
+.foot-grid span { display: flex; align-items: center; min-height: 32px; margin: 0; }
+.contacto-info p { display: flex; align-items: center; gap: 10px; min-height: var(--tap); margin: 0; }
+.contacto-info a { display: inline-flex; align-items: center; min-height: var(--tap); text-decoration: underline; text-underline-offset: 3px; }
+/* Borde #999 sobre blanco = 2.85:1 (< 3:1) */
+.contacto-form input, .contacto-form textarea {
+  font-size: 16px; min-height: var(--tap-lg); border: 2px solid #0a0a0a; background: #fff; color: #0a0a0a;
+}
+.contacto-form textarea { min-height: 120px; }
+.contacto-form .btn-dark { min-height: var(--tap-lg); }
+
+/* ---------- RULETA / MODALES ---------- */
+.spin-close {
+  display: flex; align-items: center; justify-content: center;
+  width: var(--tap); height: var(--tap); top: 4px; right: 4px;
+}
+.spin-form input { min-height: var(--tap-lg); font-size: 16px; }
+.spin-btn { min-height: var(--tap-lg); }
+.spin-win .spin-btn { background: var(--wsp); color: #000; }
+.spin-small { font-size: 12px; }
+.modal-close { width: var(--tap); height: var(--tap); }
+
+/* ---------- WHATSAPP FLOTANTE ----------
+   Antes: ícono blanco sobre #25D366 (1.98:1) y se perdía contra la zona blanca.
+   Ahora: placa negra con borde cromado (se ve sobre negro y sobre blanco) e ícono
+   verde de marca sobre negro (10.3:1). 60 px, respeta el notch/barra de gestos. */
+.wsp-fab {
+  right: max(14px, env(safe-area-inset-right, 0px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  width: 60px; height: 60px;
+  color: var(--wsp);
+  border: 2px solid transparent;
+  background: linear-gradient(#050505, #050505) padding-box, var(--chrome) border-box;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.35), 0 8px 22px rgba(0,0,0,.55);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.wsp-fab svg { width: 32px; height: 32px; }
+.wsp-fab:hover { transform: scale(1.06); box-shadow: 0 0 0 1px rgba(0,0,0,.35), 0 0 24px rgba(37,211,102,.5); }
+.wsp-fab:focus-visible { outline: 3px solid #fff; outline-offset: 3px; box-shadow: 0 0 0 7px #050505; }
+
+@media (max-width: 720px) {
+  .footer { padding-bottom: 88px; } /* que el botón flotante no tape el último enlace */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wsp-fab, .card-body button, .btn-light, .btn-dark { transition: none; }
+}
