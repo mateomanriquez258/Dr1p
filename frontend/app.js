@@ -7,6 +7,125 @@ let cuponAplicado = null; // { codigo, premio: "A"|"B" }
 
 const fmt = n => n.toLocaleString("es-AR");
 
+// ---------------------------------------------------------------------
+// CATÁLOGO: de dónde se lee productos.json
+// Se prueba cada URL en orden y gana la primera que devuelve un catálogo válido.
+//   1) /api/productos  → backend Node (si está corriendo; stock/precios en vivo)
+//   2) productos.json  → junto al index.html (raíz o carpeta frontend/)
+//   3) el resto        → ubicaciones alternativas habituales
+// pedidos.json y aplicar-aumento.js NO se leen desde el navegador: el primero
+// son pedidos de clientes y el segundo es un script de Node.
+// ---------------------------------------------------------------------
+const CATALOGO_URLS = [
+  "/api/productos",
+  "productos.json",
+  "frontend/productos.json",
+  "../productos.json",
+  "/productos.json",
+  "/frontend/productos.json"
+];
+let FUENTE_CATALOGO = "";
+
+const ESC = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ESC[c]);
+
+// Normaliza cada producto para que un campo faltante en el JSON no rompa la UI
+function normalizarProducto(p) {
+  return Object.assign({}, p, {
+    id: Number(p.id),
+    nombre: String(p.nombre || "Producto"),
+    marca: p.marca || "",
+    categoria: String(p.categoria || "").toLowerCase(),
+    precio: Number(p.precio) || 0,
+    stock: Math.max(0, Number(p.stock) || 0),
+    imagen: p.imagen || ""
+  });
+}
+
+async function cargarCatalogo() {
+  const errores = [];
+  for (const url of CATALOGO_URLS) {
+    try {
+      const r = await fetch(url, { cache: "no-cache" });
+      if (!r.ok) { errores.push(url + " → HTTP " + r.status); continue; }
+      const data = await r.json();
+      const lista = Array.isArray(data) ? data : (data && data.productos);
+      if (!Array.isArray(lista)) { errores.push(url + " → formato inesperado"); continue; }
+      const productos = lista.map(normalizarProducto).filter(p => Number.isFinite(p.id) && p.precio > 0);
+      if (!productos.length) { errores.push(url + " → catálogo vacío"); continue; }
+      FUENTE_CATALOGO = url;
+      return productos;
+    } catch (e) {
+      errores.push(url + " → " + e.message);
+    }
+  }
+  throw new Error("No se pudo cargar el catálogo:\n" + errores.join("\n"));
+}
+
+// Config del servidor (número de WhatsApp). En sitio estático no existe /api/config.
+async function cargarConfig() {
+  if (!FUENTE_CATALOGO.startsWith("/api/")) return;
+  try {
+    const r = await fetch("/api/config");
+    if (r.ok) WHATSAPP_NUMERO = (await r.json()).whatsapp || WHATSAPP_NUMERO;
+  } catch (e) { /* queda el número por defecto */ }
+}
+
+function mostrarErrorCatalogo() {
+  const box = document.getElementById("productos");
+  if (!box) return;
+  box.innerHTML = `<div class="grid-msg" role="alert">
+    <p>No pudimos cargar el catálogo. Revisá tu conexión y reintentá.</p>
+    <button type="button" class="btn-dark" onclick="location.reload()">REINTENTAR</button>
+    <a class="btn-dark" href="${wspUrl("Hola DR1P, no me carga el catálogo")}" target="_blank" rel="noopener noreferrer">ESCRIBIR POR WHATSAPP</a>
+  </div>`;
+}
+
+// Imagen de reemplazo si la URL del producto falla (CDN caído, link roto)
+const IMG_FALLBACK = "data:image/svg+xml;utf8," + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400"><rect width="400" height="400" fill="#0a0a0a"/>' +
+  '<text x="200" y="212" fill="#8e939a" font-family="monospace" font-size="30" text-anchor="middle">DR1P</text></svg>');
+function imgFallback(img) { img.onerror = null; img.src = IMG_FALLBACK; }
+
+// WhatsApp: el acceso flotante apunta al producto que se está viendo
+function wspUrl(texto) {
+  return "https://wa.me/" + WHATSAPP_NUMERO + "?text=" + encodeURIComponent(texto);
+}
+function actualizarWsp(texto) {
+  const a = document.getElementById("wsp-fab");
+  if (a) a.href = wspUrl(texto || "Hola DR1P, quería consultar por un producto");
+}
+
+function stockTexto(p) {
+  if (p.stock <= 0) return "AGOTADO";
+  if (p.stock === 1) return "¡Último en stock!";
+  return "¡Solo quedan " + p.stock + " en stock!";
+}
+function fotosDe(p) {
+  return Array.isArray(p.imagenes) && p.imagenes.length ? p.imagenes : [p.imagen];
+}
+
+// Card única (catálogo y similares). Imagen y título son enlaces reales a ?prod=ID:
+// funcionan con teclado, clic medio y se pueden compartir.
+function cardHTML(p, opts) {
+  const conStock = !opts || opts.mostrarStock !== false;
+  const sinStock = p.stock <= 0;
+  const nombre = esc(nombreLimpio(p.nombre));
+  const go = `href="?prod=${p.id}" onclick="Router.irProd(${p.id});return false;"`;
+  return `
+    <div class="card">
+      <a class="card-media" ${go} tabindex="-1" aria-hidden="true">
+        <img src="${esc(p.imagen)}" alt="" loading="lazy" onerror="imgFallback(this)">
+      </a>
+      <div class="card-body">
+        <h3><a ${go}>${nombre}</a></h3>
+        <span class="price">$${fmt(p.precio)},00</span>
+        ${conStock ? `<span class="stock${sinStock ? " agotado" : ""}">${stockTexto(p)}</span>` : ""}
+        <button type="button" onclick="agregar(${p.id})"${sinStock ? " disabled" : ""}>${sinStock ? "AGOTADO" : "CONSEGUIR DR1P"}</button>
+      </div>
+    </div>`;
+}
+
 // Nombres limpios para vidriera: quita "(M-XL)" o cualquier rango entre paréntesis.
 // En carrito y WhatsApp se conserva el nombre completo para identificar la prenda.
 function nombreLimpio(n) { return (n || "").replace(/\s*\([^)]*\)\s*/g, "").trim(); }
@@ -117,16 +236,8 @@ function limpiarBusqueda() {
 }
 
 function mostrarProductos() {
-  document.getElementById("productos").innerHTML = listaFiltrada().map(p => `
-    <div class="card">
-      <img src="${p.imagen}" alt="${p.nombre}" loading="lazy" onclick="Router.irProd(${p.id})" style="cursor:pointer">
-      <div class="card-body">
-        <h3 onclick="Router.irProd(${p.id})" style="cursor:pointer">${nombreLimpio(p.nombre)}</h3>
-        <span class="price">$${fmt(p.precio)},00</span>
-        <span class="stock">¡Solo quedan ${p.stock} en stock!</span>
-        <button onclick="agregar(${p.id})">CONSEGUIR DR1P</button>
-      </div>
-    </div>`).join("") || "Sin productos con esos filtros. Probá limpiar el sidebar.";
+  document.getElementById("productos").innerHTML = listaFiltrada().map(p => cardHTML(p)).join("") ||
+    '<p class="grid-msg">Sin productos con esos filtros. Probá limpiar el sidebar.</p>';
 }
 
 // Talles: si el producto trae `talles` propios se usan esos;
@@ -144,6 +255,7 @@ function talleDefault(p) {
 
 function agregar(id) {
   const p = PRODUCTOS.find(x => x.id == id);
+  if (!p || p.stock <= 0) return;
   agregarCantidad(id, talleDefault(p), 1);
   openCart();
 }
@@ -193,6 +305,7 @@ function descripcionProd(p) {
 
 function vistaProductoVisible(on) {
   document.getElementById("producto").style.display = on ? "" : "none";
+  if (!on) actualizarWsp();
   // En PDP solo quedan header + ficha (+contacto/footer): se oculta hero,
   // marquesina y secciones de tienda
   ["hero", "marquee", "categorias", "catalogo", "probarte", "contacto"].forEach(id => {
@@ -203,17 +316,29 @@ function vistaProductoVisible(on) {
 
 function mostrarProducto(id) {
   const p = PRODUCTOS.find(x => x.id == id);
-  if (!p) { vistaProductoVisible(false); return; }
-  pdId = id; pdCant = 1;
-  const fotos = [p.imagen]; // galería: fotos del producto
-  document.getElementById("pd-img").src = fotos[0];
-  document.getElementById("pd-img").alt = p.nombre;
-  document.getElementById("pd-thumbs").innerHTML = fotos.map((f, i) =>
-    `<img src="${f}" class="${i === 0 ? "sel" : ""}" onclick="pdFoto(${i})">`).join("");
+  if (!p) {
+    // ?prod= con un id que no existe en productos.json → catálogo, con la URL limpia
+    vistaProductoVisible(false);
+    try { history.replaceState(null, "", location.pathname + (filtroActual !== "todos" ? "?cat=" + filtroActual : "")); } catch (e) {}
+    return;
+  }
+  pdId = p.id; pdCant = 1;
+  const fotos = fotosDe(p); // galería: p.imagenes (opcional en el JSON) o la foto principal
+  const img = document.getElementById("pd-img");
+  img.onerror = () => imgFallback(img);
+  img.src = fotos[0];
+  img.alt = nombreLimpio(p.nombre);
+  const thumbs = document.getElementById("pd-thumbs");
+  thumbs.style.display = fotos.length > 1 ? "" : "none"; // con 1 sola foto la tira sobra
+  thumbs.innerHTML = fotos.map((f, i) =>
+    `<button type="button" class="pd-thumb" aria-label="Ver foto ${i + 1}" onclick="pdFoto(${i})"><img src="${esc(f)}" alt="" class="${i === 0 ? "sel" : ""}"></button>`).join("");
   document.getElementById("pd-cat").textContent = "[ " + (p.categoria || "").toUpperCase() + " ]";
   document.getElementById("pd-nombre").textContent = nombreLimpio(p.nombre);
   document.getElementById("pd-precio").textContent = "$" + fmt(p.precio);
-  document.getElementById("pd-stock").textContent = "¡Solo quedan " + p.stock + " en stock!";
+  document.getElementById("pd-stock").textContent = stockTexto(p);
+  const add = document.getElementById("pd-add");
+  if (add) { add.disabled = p.stock <= 0; add.textContent = p.stock <= 0 ? "AGOTADO" : "AGREGAR AL CARRITO"; }
+  actualizarWsp("Hola DR1P, quería consultar por: " + p.nombre);
   document.getElementById("pd-talle").innerHTML =
     tallesPara(p).map(t => `<option>${t}</option>`).join("");
   // Color: selector solo si el producto trae opciones, sino texto fijo
@@ -230,22 +355,16 @@ function mostrarProducto(id) {
   document.getElementById("pd-desc").textContent = descripcionProd(p);
   // Similares: misma categoría, sin el actual
   const sim = PRODUCTOS.filter(x => x.id != id && (x.categoria || "") === (p.categoria || "")).slice(0, 4);
-  document.getElementById("pd-similares").innerHTML = sim.map(s => `
-    <div class="card">
-      <img src="${s.imagen}" alt="${s.nombre}" loading="lazy" onclick="Router.irProd(${s.id})" style="cursor:pointer">
-      <div class="card-body">
-        <h3 onclick="Router.irProd(${s.id})" style="cursor:pointer">${nombreLimpio(s.nombre)}</h3>
-        <span class="price">$${fmt(s.precio)},00</span>
-        <button onclick="agregar(${s.id})">CONSEGUIR DR1P</button>
-      </div>
-    </div>`).join("") || "Sin similares por ahora";
+  document.getElementById("pd-similares").innerHTML = sim.map(s => cardHTML(s, { mostrarStock: false })).join("") ||
+    '<p class="grid-msg">Sin similares por ahora</p>';
   vistaProductoVisible(true);
 }
 
 function pdFoto(i) {
   const p = PRODUCTOS.find(x => x.id == pdId);
   if (!p) return;
-  document.getElementById("pd-img").src = [p.imagen][i] || p.imagen;
+  const fotos = fotosDe(p);
+  document.getElementById("pd-img").src = fotos[i] || fotos[0];
   document.querySelectorAll("#pd-thumbs img").forEach((t, j) =>
     t.classList.toggle("sel", j === i));
 }
@@ -253,7 +372,7 @@ function pdFoto(i) {
 function pdQty(d) {
   const p = PRODUCTOS.find(x => x.id == pdId);
   if (!p) return;
-  pdCant = Math.min(p.stock, Math.max(1, pdCant + d));
+  pdCant = Math.min(Math.max(p.stock, 1), Math.max(1, pdCant + d));
   document.getElementById("pd-cant").textContent = pdCant;
 }
 
@@ -353,18 +472,18 @@ function mostrarCarrito() {
     const opts = tallesPara(p).map(t =>
       `<option value="${t}"${t === l.talle ? " selected" : ""}>${t}</option>`).join("");
     return `<div class="item">
-      <img src="${p.imagen}">
+      <img src="${esc(p.imagen)}" alt="" onerror="imgFallback(this)">
       <div style="flex:1">
-        <div>${p.nombre}</div>
+        <div>${esc(p.nombre)}</div>
         <small>$${fmt(p.precio)} c/u</small>
-        <select onchange="setTalle(${i},this.value)">${opts}</select>
-        <div>
-          <button onclick="cambiar(${i},-1)">-</button>
-          ${l.cant}
-          <button onclick="cambiar(${i},1)">+</button>
+        <select aria-label="Talle" onchange="setTalle(${i},this.value)">${opts}</select>
+        <div class="item-qty">
+          <button type="button" aria-label="Restar una unidad" onclick="cambiar(${i},-1)">−</button>
+          <span>${l.cant}</span>
+          <button type="button" aria-label="Sumar una unidad" onclick="cambiar(${i},1)">+</button>
         </div>
       </div>
-      <button onclick="quitar(${i})">✕</button>
+      <button type="button" class="item-del" aria-label="Quitar del carrito" onclick="quitar(${i})">✕</button>
     </div>`;
   }).join("") : "Tu carrito está vacío";
 }
@@ -391,24 +510,31 @@ async function enviarWhatsApp() {
   const nombre = document.getElementById("nombre").value || "Sin nombre";
   const sub = total(), desc = descuento(), tot = totalFinal();
 
-  const r = await fetch("/api/pedidos", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      nombre,
-      items: carrito.map(l => {
-        const p = PRODUCTOS.find(x => x.id == l.id);
-        return { id: l.id, nombre: p.nombre, talle: l.talle, cant: l.cant, precio: p.precio };
+  // Registro del pedido en el servidor. Si no hay servidor (sitio estático: 404/405/501
+  // o red caída) NO se bloquea la venta: el pedido igual sale por WhatsApp.
+  const SIN_API = [404, 405, 501];
+  try {
+    const r = await fetch("/api/pedidos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nombre,
+        items: carrito.map(l => {
+          const p = PRODUCTOS.find(x => x.id == l.id);
+          return { id: l.id, nombre: p.nombre, talle: l.talle, cant: l.cant, precio: p.precio };
+        }),
+        cupon: cuponAplicado // el servidor revalida y recalcula (no confía en estos totales)
       }),
-      cupon: cuponAplicado // el servidor revalida y recalcula (no confía en estos totales)
-    }),
-  });
-  if (!r.ok) {
-    // Cupón inválido/usado al momento del pedido → se limpia y no se envía
-    cuponAplicado = null;
-    mostrarCarrito();
-    alert("El cupón ya no es válido (usado o inexistente). Se quitó del pedido.");
-    return;
+    });
+    if (!r.ok && SIN_API.indexOf(r.status) < 0) {
+      // Cupón inválido/usado al momento del pedido → se limpia y no se envía
+      cuponAplicado = null;
+      mostrarCarrito();
+      alert("El cupón ya no es válido (usado o inexistente). Se quitó del pedido.");
+      return;
+    }
+  } catch (e) {
+    console.warn("Pedido sin registrar (sin servidor):", e);
   }
 
   const lineas = [`Hola Dr1p.tm! Soy ${nombre}, quiero comprar:`, ""];
@@ -442,30 +568,37 @@ async function enviarContacto(e) {
   }
 }
 
-function init() {
-  // init hidrata datos y delega la ruta inicial al Router (?cat= / ?prod=)
-  Promise.all([fetch("/api/productos"), fetch("/api/config")]).then(async ([pr, cfg]) => {
-    PRODUCTOS = await pr.json();
-    try { WHATSAPP_NUMERO = (await cfg.json()).whatsapp || WHATSAPP_NUMERO; } catch {}
-    try {
-      const q = new URLSearchParams(location.search).get("cat");
-      if (q && ["todos", "remeras", "pantalones", "gorras"].includes(q)) filtroActual = q;
-    } catch {}
-    mostrarCarrito();
-    renderFiltros(); // construye el sidebar con los datos reales
-    window.__datosOK = true;
-    if (window.Router) window.Router.refrescar(false);
-    else if (typeof window.filtrar === "function") window.filtrar(filtroActual);
-    initPanelFiltros(); // nuevo panel de filtros (desktop sidebar / móvil drawer)
-  });
-
-  // Buscador en vivo (no toca la URL ni el historial)
+async function init() {
+  // El buscador se conecta primero: existe aunque el catálogo tarde o falle.
+  // (en vivo, no toca la URL ni el historial)
   const search = document.getElementById("nav-search");
   if (search) search.addEventListener("input", e => {
     busqueda = e.target.value;
     if (typeof window.filtrar === "function") window.filtrar(filtroActual);
     document.getElementById("catalogo").scrollIntoView({ behavior: "smooth" });
   });
+
+  try {
+    PRODUCTOS = await cargarCatalogo();
+  } catch (err) {
+    console.error(err.message);
+    mostrarErrorCatalogo();
+    return;
+  }
+  await cargarConfig();
+  actualizarWsp();
+
+  // hidrata datos y delega la ruta inicial al Router (?cat= / ?prod=)
+  try {
+    const q = new URLSearchParams(location.search).get("cat");
+    if (q && ["todos", "remeras", "pantalones", "gorras"].includes(q)) filtroActual = q;
+  } catch (e) {}
+  mostrarCarrito();
+  renderFiltros(); // construye el sidebar con los datos reales
+  window.__datosOK = true;
+  if (window.Router) window.Router.refrescar(false);
+  else if (typeof window.filtrar === "function") window.filtrar(filtroActual);
+  initPanelFiltros(); // panel de filtros (desktop sidebar / móvil drawer)
 }
 
 init();
