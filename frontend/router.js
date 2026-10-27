@@ -110,5 +110,18 @@
     history.replaceState({ cat: r.cat, prod: r.prod }, "", urlDe(r.cat, r.prod));
   });
 
+  // Refrescar ScrollTrigger (si está disponible) al cambiar de vista
+  function refreshScrollTrigger() {
+    if (typeof ScrollTrigger !== "undefined" && typeof ScrollTrigger.refresh === "function") {
+      ScrollTrigger.refresh();
+    }
+  }
+  // Llamar después de aplicar cualquier ruta
+  var origAplicarRuta = aplicarRuta;
+  aplicarRuta = function (ruta, conScroll) {
+    origAplicarRuta(ruta, conScroll);
+    setTimeout(refreshScrollTrigger, 100);
+  };
+
   window.Router = { ir: ir, inicio: inicio, irProd: irProd, volver: volver, catalogo: catalogo, home: home, actual: rutaActual, refrescar: refrescar };
 })();

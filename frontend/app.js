@@ -258,6 +258,8 @@ function agregar(id) {
   if (!p || p.stock <= 0) return;
   agregarCantidad(id, talleDefault(p), 1);
   openCart();
+  // Enganchar animación GSAP (no toca la lógica del carrito)
+  document.dispatchEvent(new CustomEvent("dr1p:cart-add"));
 }
 
 // Agrega N unidades con talle elegido (usado por la vista individual)
@@ -358,6 +360,8 @@ function mostrarProducto(id) {
   document.getElementById("pd-similares").innerHTML = sim.map(s => cardHTML(s, { mostrarStock: false })).join("") ||
     '<p class="grid-msg">Sin similares por ahora</p>';
   vistaProductoVisible(true);
+  // Enganchar animación GSAP para la ficha de producto
+  document.dispatchEvent(new CustomEvent("dr1p:pdp-open"));
 }
 
 function pdFoto(i) {
