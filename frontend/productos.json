@@ -3,62 +3,110 @@
     "id": 1,
     "nombre": "Remera Chrome_Heart (M-XL)",
     "marca": "Chrome Heart",
-    "talles": ["M", "L", "XL"],
+    "talles": [
+      "M",
+      "L",
+      "XL"
+    ],
     "precio": 29990,
     "precio_base": 24992,
     "stock": 5,
     "categoria": "remeras",
-    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/whatsapp-image-2026-10-09-at-i-7e5d6d113d0424347a17915842039544-480-0.webp"
+    "imagen": "assets/chrome hearts/remera frontal chrome hearts.webp",
+    "imagenes": [
+      "assets/chrome hearts/conjunto chrome hearts.webp",
+      "assets/chrome hearts/remera dorso chrome hearts.webp",
+      "assets/chrome hearts/remera frontal chrome hearts.webp"
+    ]
   },
   {
     "id": 2,
     "nombre": "Remera Bathing_Ape (M-XL)",
     "marca": "Bathing Ape",
-    "talles": ["M", "L", "XL"],
+    "talles": [
+      "M",
+      "L",
+      "XL"
+    ],
     "precio": 29990,
     "precio_base": 24992,
     "stock": 5,
     "categoria": "remeras",
-    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/whatsapp-image-2026-10-09-at-d-328c0c84a68ab61e6917915839312926-480-0.webp"
+    "imagen": "assets/bape/remera frontal bape blanca.webp",
+    "imagenes": [
+      "assets/bape/conjunto bape.webp",
+      "assets/bape/conjunto bape 2.webp",
+      "assets/bape/remera dorso bape blanca.webp",
+      "assets/bape/remera frontal bape blanca.webp"
+    ]
   },
   {
     "id": 3,
     "nombre": "Remera Corteiz boxyfit (M-XL)",
     "marca": "Corteiz",
-    "talles": ["M", "L", "XL"],
+    "talles": [
+      "M",
+      "L",
+      "XL"
+    ],
     "precio": 29990,
     "precio_base": 24992,
     "stock": 5,
     "categoria": "remeras",
-    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/1-0aa249cf7b95e630fe17915838557121-480-0.webp"
+    "imagen": "assets/corteiz/conjunto corteiz.webp",
+    "imagenes": [
+      "assets/corteiz/conjunto corteiz.webp",
+      "assets/corteiz/remera dorso corteiz negra.webp"
+    ]
   },
   {
     "id": 4,
     "nombre": "Remera Vans blanca (M-XL)",
     "marca": "Vans",
-    "talles": ["M", "L", "XL"],
+    "talles": [
+      "M",
+      "L",
+      "XL"
+    ],
     "precio": 29990,
     "precio_base": 24992,
     "stock": 10,
     "categoria": "remeras",
-    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/whatsapp-image-2026-10-09-at-18-35-08-5f7d25a625cce67ec417915826303186-480-0.webp"
+    "imagen": "assets/vans blanca/remera frontal vans blanxa.webp",
+    "imagenes": [
+      "assets/vans blanca/remera dorso vans blanca.webp",
+      "assets/vans blanca/remera frontal vans blanxa.webp"
+    ]
   },
   {
     "id": 5,
     "nombre": "Remera Vans negra (M-XL)",
     "marca": "Vans",
-    "talles": ["M", "L", "XL"],
+    "talles": [
+      "M",
+      "L",
+      "XL"
+    ],
     "precio": 29990,
     "precio_base": 24992,
     "stock": 10,
     "categoria": "remeras",
-    "imagen": "https://dcdn-us.mitiendanube.com/stores/008/356/664/products/whatsapp-image-2026-10-09-at-18-35-08er-3621b3a44e03258ab717915823805443-480-0.webp"
+    "imagen": "assets/vans negra/remera frontal vans negra.webp",
+    "imagenes": [
+      "assets/vans negra/remera frontal vans negra.webp"
+    ]
   },
   {
     "id": 6,
     "nombre": "Pantalón Short Jordan Gris (M–3XL)",
     "marca": "Jordan",
-    "talles": ["M", "L", "XL", "XXL", "3XL"],
+    "talles": [
+      "M",
+      "L",
+      "XL",
+      "XXL",
+      "3XL"
+    ],
     "precio": 30990,
     "precio_base": 25825,
     "stock": 5,
@@ -69,7 +117,11 @@
     "id": 7,
     "nombre": "Pantalón Short Jordan Negro (M · 2XL · 3XL)",
     "marca": "Jordan",
-    "talles": ["M", "2XL", "3XL"],
+    "talles": [
+      "M",
+      "2XL",
+      "3XL"
+    ],
     "precio": 30990,
     "precio_base": 25825,
     "stock": 5,
@@ -80,7 +132,10 @@
     "id": 8,
     "nombre": "Pantalón Short Jordan Negro V2 (L · XL)",
     "marca": "Jordan",
-    "talles": ["L", "XL"],
+    "talles": [
+      "L",
+      "XL"
+    ],
     "precio": 30990,
     "precio_base": 25825,
     "stock": 5,
@@ -91,7 +146,13 @@
     "id": 9,
     "nombre": "Pantalón Corto Baggy Negro (M-XL)",
     "marca": "DR1P",
-    "talles": ["M", "L", "XL", "XXL", "3XL"],
+    "talles": [
+      "M",
+      "L",
+      "XL",
+      "XXL",
+      "3XL"
+    ],
     "precio": 27990,
     "precio_base": 23325,
     "stock": 8,
@@ -102,7 +163,13 @@
     "id": 10,
     "nombre": "Pantalón Corto Baggy Gris (M-XL)",
     "marca": "DR1P",
-    "talles": ["M", "L", "XL", "XXL", "3XL"],
+    "talles": [
+      "M",
+      "L",
+      "XL",
+      "XXL",
+      "3XL"
+    ],
     "precio": 27990,
     "precio_base": 23325,
     "stock": 8,
