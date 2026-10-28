@@ -76,6 +76,16 @@ function scrollReveals() {
     },
     { amount: 0.2 }
   );
+  // Fallback: si inView no dispara (móvil, IntersectionObserver falla),
+  // forzar visibilidad después de 2.5s para no dejar elementos invisibles.
+  setTimeout(() => {
+    targets.forEach((el) => {
+      if (el.style.opacity === "0" || getComputedStyle(el).opacity === "0") {
+        el.style.opacity = "1";
+        el.style.transform = "";
+      }
+    });
+  }, 2500);
 }
 
 /* Las tarjetas las genera app.js; se animan cada vez que se re-renderiza la grilla. */
@@ -96,6 +106,15 @@ function revealProductCards() {
       },
       { amount: 0.05 }
     );
+    // Fallback: si inView no dispara en móvil, forzar visibilidad.
+    setTimeout(() => {
+      cards.forEach((c) => {
+        if (c.style.opacity === "0" || getComputedStyle(c).opacity === "0") {
+          c.style.opacity = "1";
+          c.style.transform = "";
+        }
+      });
+    }, 3000);
   };
   grids.forEach((grid) => {
     run(grid);
@@ -154,3 +173,37 @@ if (!reduced) {
   thornParallax();
   magnetic();
 }
+
+// Fallback global de seguridad: después de 4s, forzar visibilidad de todo
+// lo que haya quedado oculto por animaciones que no dispararon (móvil,
+// IntersectionObserver fallido, Motion no cargado, etc.).
+setTimeout(() => {
+  document.querySelectorAll(".js-motion [data-reveal], .js-motion .y2k-title .ch, .js-motion .thorn").forEach((el) => {
+    el.style.opacity = "1";
+    el.style.transform = "";
+  });
+  document.querySelectorAll(".ruleta-banner .rb-grid > *, #categorias .idx, .cat-card, .section-head, .show-card, .contacto-grid > *").forEach((el) => {
+    if (el.style.opacity === "0" || getComputedStyle(el).opacity === "0") {
+      el.style.opacity = "1";
+      el.style.transform = "";
+    }
+  });
+  document.querySelectorAll("#productos .card, #pd-similares .card").forEach((el) => {
+    if (el.style.opacity === "0" || getComputedStyle(el).opacity === "0") {
+      el.style.opacity = "1";
+      el.style.transform = "";
+    }
+  });
+}, 4000);
+
+// Fallback adicional para móvil: después de 2s, forzar visibilidad de todos
+// los elementos que estén en opacity 0, independientemente de su selector.
+setTimeout(() => {
+  document.querySelectorAll("*").forEach((el) => {
+    const style = getComputedStyle(el);
+    if (style.opacity === "0" && el.style.opacity !== "0") {
+      // Solo forzar si el elemento tiene opacity 0 por CSS o por JS
+      el.style.opacity = "1";
+    }
+  });
+}, 2000);
