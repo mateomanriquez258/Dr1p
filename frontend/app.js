@@ -38,7 +38,8 @@ function normalizarProducto(p) {
     categoria: String(p.categoria || "").toLowerCase(),
     precio: Number(p.precio) || 0,
     stock: Math.max(0, Number(p.stock) || 0),
-    imagen: p.imagen || ""
+    imagen: encodeURI(p.imagen || ""),
+    imagenes: Array.isArray(p.imagenes) ? p.imagenes.map(x => encodeURI(x)) : (p.imagen ? [encodeURI(p.imagen)] : [])
   });
 }
 
