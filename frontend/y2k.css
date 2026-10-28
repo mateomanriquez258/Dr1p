@@ -156,12 +156,22 @@ html, body { background: var(--page-bg); color: #0a0a0a; }
 .band.bottom .float { animation-delay: -5s; }
 .band.top .glint { animation-delay: .6s; animation-duration: 6.5s; }
 .band.bottom .glint { animation-delay: 3.2s; animation-duration: 6.5s; }
+
+.side { top: 50%; height: min(820px, 56vw); width: min(820px, 56vw); aspect-ratio: 1024 / 210; margin-top: calc(min(820px, 56vw) / -2); transform-origin: center center; }
+.side img { object-position: 50% 51%; transform: rotate(90deg); }
+.side.left { left: -1.5%; transform: translateY(-50%) rotate(-90deg); }
+.side.right { right: -1.5%; transform: translateY(-50%) rotate(90deg); }
+.side .float { animation: drift 11s ease-in-out infinite; }
+.side.left .float { animation-delay: -2s; }
+.side.right .float { animation-delay: -7s; }
+.side .glint { animation-delay: 1.8s; animation-duration: 6.5s; }
 @keyframes drift {
   0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); }
 }
 @media (max-width: 720px) {
   .band { width: 92vw; margin-left: -46vw; }
   .corner { width: 46vw; }
+  .side { height: 92vw; width: 92vw; margin-top: -46vw; }
 }
 
 /* Destellos (lens flare de 4 puntas) */
