@@ -136,9 +136,9 @@ html, body { background: var(--page-bg); color: #0a0a0a; }
 .corner.br img { transform: scale(-1, -1); }
 
 /* Corona decorativa sobre el titulo */
-.crown { position: absolute; top: 3%; left: 50%; width: min(140px, 26vw); transform: translateX(-50%); mix-blend-mode: difference; pointer-events: none; z-index: 3; }
+.crown { position: absolute; top: 3%; left: 50%; width: clamp(180px, 22vw, 320px); transform: translateX(-50%); mix-blend-mode: difference; pointer-events: none; z-index: 3; }
 .crown .float { animation: sway 9s ease-in-out infinite; }
-.crown img { width: 100%; height: auto; filter: grayscale(1) contrast(1.5) brightness(1.15); }
+.crown img { width: 100%; height: auto; filter: invert(1) grayscale(1) contrast(1.5) brightness(1.15); }
 .corner .float { animation: sway 9s ease-in-out infinite; }
 .corner.tl .float { transform-origin: 0 0; }
 .corner.tr .float { transform-origin: 100% 0; animation-delay: -2s; }
@@ -156,6 +156,7 @@ html, body { background: var(--page-bg); color: #0a0a0a; }
 .band img { object-position: 50% 51%; }
 .band.top { top: -1.5%; }
 .band.bottom { bottom: -1.5%; }
+.band.mid { top: 50%; transform: translateY(-50%); width: 130vw; margin-left: -65vw; }
 .band.bottom img { transform: scaleY(-1); object-position: 50% 49%; }
 .band .float { animation: drift 11s ease-in-out infinite; }
 .band.bottom .float { animation-delay: -5s; }
@@ -376,6 +377,7 @@ html, body { background: var(--page-bg); color: #0a0a0a; }
 /* ---------- HERO MOBILE (max-width: 768px) ---------- */
 @media (max-width: 768px) {
   .y2k-hero { overflow-x: hidden; }
+  .crown, .thorn.band.top { display: none; }
   .y2k-grain { inset: 0; }
   .y2k-mark { width: min(88vw, 360px); opacity: .05; }
 
