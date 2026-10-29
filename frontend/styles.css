@@ -315,14 +315,24 @@ a.btn-dark { color: #fff; } /* gana a .zone-light a */
 .stock { font-size: 12px; color: var(--silver); font-family: var(--font-m); }
 .card-body button { background: #fff; color: #000; border: 0; padding: 12px; cursor: pointer; text-transform: uppercase; font-weight: 700; }
 .card-body button:hover { background: var(--silver); }
-.btn-volver { background: transparent; color: inherit; border: 1px solid currentColor; padding: 8px 14px; cursor: pointer; font-family: var(--font-m); font-size: 12px; margin-bottom: 16px; }
+.pd-toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.btn-volver { background: transparent; color: inherit; border: 1px solid currentColor; padding: 8px 14px; cursor: pointer; font-family: var(--font-m); font-size: 12px; margin: 0; flex: 0 0 auto; }
 .pd-layout { display: grid; gap: 24px; grid-template-columns: 1fr; }
 .pd-gallery { position: relative; background: #0a0a0a; border: 1px solid #000; align-self: start; }
 .pd-gallery img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+.pd-gallery > #pd-img { cursor: zoom-in; }
+.pd-zoom-trigger { display: block; width: 100%; padding: 10px 12px; background: #080808; color: #fff; border: 0; border-top: 1px solid #333; font-family: var(--font-m); font-size: 11px; letter-spacing: .12em; cursor: zoom-in; }
+.pd-zoom-trigger:hover { background: #222; }
+.pd-zoom { position: fixed; inset: 0; margin: auto; width: min(94vw, 1200px); height: min(92vh, 1000px); max-width: none; max-height: none; padding: 52px 18px 18px; border: 1px solid #777; background: #080808; color: #fff; overflow: hidden; }
+.pd-zoom[open] { display: grid; place-items: center; }
+.pd-zoom::backdrop { background: rgba(0,0,0,.92); backdrop-filter: blur(4px); }
+#pd-zoom-img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+.pd-zoom-close { position: absolute; top: 8px; right: 8px; width: 42px; height: 42px; background: #fff; color: #000; border: 0; font-size: 18px; cursor: pointer; }
 .free-tag {
-  position: absolute; top: 12px; left: 12px; z-index: 2; max-width: 70%;
+  position: static; display: inline-block; max-width: 100%;
   background: #fff; color: #000;
-  font-size: 11px; font-weight: 700; padding: 6px 10px;
+  border: 1px solid currentColor; font-size: 11px; font-weight: 700;
+  line-height: 1.35; padding: 8px 10px;
 }
 .pd-envio { font-size: 13px; font-weight: 700; margin: 0 0 4px; }
 .pd-thumbs { display: flex; gap: 8px; padding: 8px; }
@@ -338,12 +348,16 @@ a.btn-dark { color: #fff; } /* gana a .zone-light a */
 .pd-qty button { background: #fff; color: #000; border: 0; width: 36px; height: 36px; font-size: 18px; cursor: pointer; }
 .pd-qty span span, #pd-cant { font-size: 18px; margin: 0 4px; }
 .pd-desc { margin-top: 20px; line-height: 1.7; font-size: 15px; }
-.pd-faq { margin: 36px 0; }
+.pd-faq { margin: 52px 0 36px; }
 .pd-faq details { border: 1px solid currentColor; margin-bottom: 8px; background: rgba(0,0,0,.35); }
 .zone-light .pd-faq details, .zone-mid .pd-faq details { background: rgba(0,0,0,.45); color: #fff; }
 .pd-faq summary { padding: 14px; cursor: pointer; font-family: var(--font-m); font-size: 13px; letter-spacing: 1px; }
 .pd-faq details p { padding: 0 14px 14px; margin: 0; font-size: 14px; line-height: 1.6; }
 @media (min-width: 860px) { .pd-layout { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) {
+  .pd-zoom { width: 100vw; height: 100dvh; padding: 58px 8px 8px; border: 0; }
+  .pd-zoom-close { top: 8px; right: 8px; }
+}
 
 /* [04-05] Showroom + contacto (gris claro, texto negro) */
 .show-card {

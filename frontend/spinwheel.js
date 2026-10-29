@@ -165,7 +165,7 @@
           indice: i,
           titulo: base.titulo,
           gana: base.tipo !== "NONE",
-          cupon: base.tipo !== "NONE" ? "PENDIENTE-" + base.tipo : null
+          cupon: null
         };
       }
     }
@@ -176,7 +176,7 @@
       indice: PESOS.length - 1,
       titulo: base.titulo,
       gana: base.tipo !== "NONE",
-      cupon: base.tipo !== "NONE" ? "PENDIENTE-" + base.tipo : null
+      cupon: null
     };
   }
 
@@ -202,9 +202,10 @@
     wheel.style.transform = "rotate(" + destino + "deg)";
 
     leadCupon = null;
-    guardarLead(emailInput.value.trim(), premioActual);
-
-    setTimeout(mostrarVictoria, DURACION_MS + 150);
+    Promise.all([
+      new Promise(function (resolve) { setTimeout(resolve, DURACION_MS + 150); }),
+      guardarLead(emailInput.value.trim(), premioActual)
+    ]).then(function (resultados) { mostrarVictoria(resultados[1]); });
   }
 
   // ---- 9. Guardar lead (backend + Formspree, background) ----
@@ -213,9 +214,18 @@
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: email, premio: premio.tipo, cupon: "-" })
-    }).then(function (r) { return r.json(); })
-      .then(function (d) { if (d && d.cupon) leadCupon = d.cupon; })
-      .catch(function () {});
+    }).then(function (r) {
+      return r.json().catch(function () { return null; }).then(function (d) {
+        if (!r.ok || !d || !d.ok || (premio.gana && !d.cupon)) return { ok: false };
+        var premioConfirmado = PREMIOS.find(function (item) { return item.tipo === d.premio; });
+        if (premio.gana && premioConfirmado) {
+          premio.tipo = premioConfirmado.tipo;
+          premio.titulo = premioConfirmado.titulo;
+        }
+        leadCupon = d.cupon || null;
+        return { ok: true };
+      });
+    }).catch(function () { return { ok: false }; });
     fetch(FORMSPREE_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
@@ -229,24 +239,43 @@
   }
 
   // ---- 10. Pantalla de victoria (según premio sorteado) ----
-  function mostrarVictoria() {
+  function mostrarVictoria(resultado) {
     girando = false;
-    try { localStorage.setItem(LS_TS, String(Date.now())); } catch (e) {} // arranca las 24hs
     formBox.style.display = "none";
     stageBox.style.display = "none";
-    if (leadCupon) premioActual.cupon = leadCupon; // código confirmado por el servidor
-      $("spin-title").textContent = "¡Felicitaciones!";
-      $("spin-sub").textContent = "Ganaste:";
+    $("btn-copy").style.display = "";
+    $("btn-copy").disabled = false;
+    $("btn-copy").textContent = "Copiar mi cupón";
+
+    if (!resultado || !resultado.ok) {
+      $("spin-title").textContent = "No se pudo generar el cupón";
+      $("spin-sub").textContent = "El servidor no confirmó el resultado.";
       $("win-prize").textContent = premioActual.titulo;
-      $("win-coupon").textContent = premioActual.cupon;
-      $("win-info").textContent = premioActual.tipo === "5000"
-        ? "Copiá el código y pegalo en el campo CUPÓN del carrito antes de finalizar por WhatsApp. Se descuentan $5.000 del total."
-        : "Copiá el código y pegalo en el campo CUPÓN del carrito antes de finalizar por WhatsApp. Se descuenta el % del total.";
+      $("win-coupon").textContent = "";
+      $("win-info").textContent = "No se mostró ningún código. Cerrá esta ventana e intentá de nuevo cuando la tienda esté conectada.";
+      $("btn-copy").style.display = "none";
       winBox.classList.add("show");
+      return;
+    }
+
+    try { localStorage.setItem(LS_TS, String(Date.now())); } catch (e) {} // arranca las 24hs
+    if (leadCupon) premioActual.cupon = leadCupon;
+    $("spin-title").textContent = premioActual.gana ? "¡Felicitaciones!" : "Ruleta en pausa";
+    $("spin-sub").textContent = premioActual.gana ? "Ganaste:" : "Esta vez no hubo premio.";
+    $("win-prize").textContent = premioActual.gana ? premioActual.titulo : "Volvé a intentarlo en 24 horas.";
+    $("win-coupon").textContent = leadCupon || "";
+    $("win-info").textContent = premioActual.gana
+      ? (premioActual.tipo === "5000"
+        ? "Copiá el código y pegalo en el campo CUPÓN del carrito antes de finalizar por WhatsApp. Se descuentan $5.000 del total."
+        : "Copiá el código y pegalo en el campo CUPÓN del carrito antes de finalizar por WhatsApp. Se descuenta el % del total.")
+      : "";
+    if (!premioActual.gana) $("btn-copy").style.display = "none";
+    winBox.classList.add("show");
   }
 
   function copiarCupon() {
     var cupon = premioActual ? premioActual.cupon : "";
+    if (!cupon) return;
     function ok() { $("btn-copy").textContent = "¡Copiado!"; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(cupon).then(ok).catch(ok);

@@ -23,21 +23,27 @@
 
 /* ---------- NAV ---------- */
 html, body { background: var(--page-bg); color: #0a0a0a; }
+body { position: relative; isolation: isolate; }
+body::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  pointer-events: none; opacity: .18; mix-blend-mode: multiply;
+  background: url("assets/linea.png") center top / 100% clamp(180px, 28vh, 280px) repeat-y;
+}
 .page-grad { background: none; }
 
 .nav {
-  background: var(--page-bg); color: #0a0a0a;
-  border-bottom: 0;
+  background: #080808; color: #f5f5f5;
+  border-bottom: 1px solid rgba(255,255,255,.18);
 }
 .nav-inner { padding-inline: var(--gutter); }
-.header-logo { filter: invert(1) contrast(1.2) drop-shadow(0 2px 6px rgba(0,0,0,.25)) !important; }
-.logo-link:hover .header-logo { filter: invert(1) contrast(1.3) drop-shadow(0 4px 10px rgba(0,0,0,.4)) !important; }
+.header-logo { filter: grayscale(1) contrast(1.2) drop-shadow(0 2px 6px rgba(255,255,255,.2)) !important; }
+.logo-link:hover .header-logo { filter: grayscale(1) contrast(1.3) drop-shadow(0 4px 10px rgba(255,255,255,.3)) !important; }
 .nav::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
   background: var(--chrome-line); opacity: .55;
 }
-.header-logo { filter: drop-shadow(0 0 10px rgba(255, 255, 255, .18)); transition: filter .4s ease, transform .4s var(--ease-out); }
-.logo-link:hover .header-logo { filter: drop-shadow(0 0 16px rgba(255, 255, 255, .45)); transform: rotate(-3deg) scale(1.04); }
+.header-logo { filter: grayscale(1) contrast(1.2) drop-shadow(0 0 10px rgba(255, 255, 255, .18)); transition: filter .4s ease, transform .4s var(--ease-out); }
+.logo-link:hover .header-logo { filter: grayscale(1) contrast(1.3) drop-shadow(0 0 16px rgba(255, 255, 255, .45)); transform: rotate(-3deg) scale(1.04); }
 .nav-links { gap: 22px; }
 .nav-links a {
   position: relative; border-bottom: 0; font-weight: 700; letter-spacing: .06em;
@@ -50,11 +56,11 @@ html, body { background: var(--page-bg); color: #0a0a0a; }
 }
 .nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
 .nav-tools input {
-  background: #fff; color: #0a0a0a;
-  border: 1px solid #0a0a0a; letter-spacing: .1em; transition: border-color .3s ease, box-shadow .3s ease;
+  background: #0a0a0a; color: #fff;
+  border: 1px solid #d8d8d8; letter-spacing: .1em; transition: border-color .3s ease, box-shadow .3s ease;
 }
-.nav-tools input::placeholder { color: #666; }
-.nav-tools input:focus { outline: none; border-color: #000; box-shadow: 0 0 0 1px #000, 0 6px 18px -8px rgba(0,0,0,.4); }
+.nav-tools input::placeholder { color: #aaa; }
+.nav-tools input:focus { outline: none; border-color: #fff; box-shadow: 0 0 0 1px #fff, 0 6px 18px -8px rgba(0,0,0,.6); }
 .cart-btn {
   background: var(--chrome); background-size: 200% 200%; color: #fff; font-weight: 700; text-shadow: 0 1px 2px #000;
   transition: background-position .6s var(--ease-out), transform .2s ease;
@@ -67,8 +73,16 @@ html, body { background: var(--page-bg); color: #0a0a0a; }
   min-height: calc(100svh - 72px);
   display: flex; align-items: center; justify-content: center;
   overflow: hidden; color: #000; text-align: center;
-  /* Mismo degradé que el body (el hero aísla su blending, necesita fondo propio) */
-  background: var(--page-bg);
+  /* Fondo transparente para dejar pasar la textura global repetida. */
+  background: transparent;
+}
+
+.hero-metal {
+  position: absolute; z-index: 0; inset: 0;
+  pointer-events: none; opacity: .58; mix-blend-mode: multiply;
+  background: linear-gradient(90deg,
+    rgba(24,24,24,.42) 0%, rgba(92,92,92,.32) 18%,
+    rgba(145,145,145,.25) 50%, rgba(92,92,92,.32) 82%, rgba(24,24,24,.42) 100%) center / 100% 100% no-repeat;
 }
 
 .y2k-grain {
@@ -87,8 +101,15 @@ html, body { background: var(--page-bg); color: #0a0a0a; }
   position: absolute; z-index: 0; left: 50%; top: 50%;
   width: min(1100px, 92vw); height: auto;
   transform: translate(-50%, -50%) rotate(-6deg);
-  mix-blend-mode: multiply; opacity: .07; pointer-events: none;
-  animation: mark-float 12s ease-in-out infinite;
+  mix-blend-mode: multiply; opacity: .19; pointer-events: none;
+}
+
+.hero-crown {
+  position: absolute; z-index: 3; left: 50%; top: 4%;
+  width: clamp(116px, 18vw, 250px); height: auto;
+  transform: translateX(-50%);
+  pointer-events: none;
+  filter: grayscale(1) contrast(1.5) brightness(1.15);
 }
 @keyframes mark-float {
   0%, 100% { transform: translate(-50%, -50%) rotate(-6deg) scale(1); }
@@ -98,19 +119,18 @@ html, body { background: var(--page-bg); color: #0a0a0a; }
 /* ---------- THORNS (chrome) ---------- */
 /* Sin z-index acá: crearía un stacking context y el screen se mezclaría
    contra transparente en vez del fondo blanco del hero. */
-.thorns { position: absolute; inset: 0; pointer-events: none; }
-.thorn, .spark { z-index: 1; }
+.thorns { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.thorn, .spark { z-index: 5; }
 .thorn {
-  /* difference: el fondo negro del PNG desaparece sobre blanco y el
-     cromo plateado se invierte en cromo oscuro pulido (como el logo). */
-  position: absolute; mix-blend-mode: difference; will-change: transform;
+  /* Los PNG ya traen transparencia; el filtro mantiene el cromo visible sin fondos de mezcla. */
+  position: absolute; pointer-events: none; will-change: transform;
   transform: translate3d(var(--px, 0), var(--py, 0), 0);
   transition: transform .9s var(--ease-out);
 }
 .thorn .float { position: relative; isolation: isolate; overflow: hidden; width: 100%; height: 100%; }
 .thorn img {
   display: block; width: 100%; height: 100%; object-fit: cover;
-  filter: grayscale(1) contrast(1.4) brightness(1.1);
+  filter: grayscale(1) contrast(1.5) brightness(.78);
   user-select: none; -webkit-user-drag: none;
 }
 /* Barrido de brillo: multiply oscurece el metal y, al invertirse,
@@ -119,21 +139,23 @@ html, body { background: var(--page-bg); color: #0a0a0a; }
   position: absolute; inset: 0; mix-blend-mode: multiply; pointer-events: none; opacity: .55;
   background: linear-gradient(115deg, #fff 40%, #3a3a3a 48%, #000 50%, #3a3a3a 52%, #fff 60%);
   background-size: 250% 100%; background-repeat: no-repeat;
+  -webkit-mask: var(--thorn-mask) center / cover no-repeat;
+  mask: var(--thorn-mask) center / cover no-repeat;
   animation: glint 7s var(--ease-out) infinite;
 }
 @keyframes glint {
   0% { background-position: 160% 0; } 55%, 100% { background-position: -60% 0; }
 }
 
-.corner { width: clamp(130px, 18vw, 290px); aspect-ratio: 1; }
-.corner img { opacity: .7; }
+.corner { --thorn-mask: url("assets/thorns-corner.png"); width: clamp(90px, 14vw, 180px); aspect-ratio: 1; }
+.corner img { opacity: .82; }
 .corner.tl { top: -1.5%; left: -1.5%; }
 .corner.tr { top: -1.5%; right: -1.5%; }
 .corner.bl { bottom: -1.5%; left: -1.5%; }
 .corner.br { bottom: -1.5%; right: -1.5%; }
-.corner.tr img { transform: scaleX(-1); }
-.corner.bl img { transform: scaleY(-1); }
-.corner.br img { transform: scale(-1, -1); }
+.corner.tr img, .corner.tr .glint { transform: scaleX(-1); }
+.corner.bl img, .corner.bl .glint { transform: scaleY(-1); }
+.corner.br img, .corner.br .glint { transform: scale(-1, -1); }
 
 /* Corona decorativa sobre el titulo */
 .crown { position: absolute; top: 3%; left: 50%; width: clamp(180px, 22vw, 320px); transform: translateX(-50%); mix-blend-mode: difference; pointer-events: none; z-index: 3; }
@@ -152,16 +174,23 @@ html, body { background: var(--page-bg); color: #0a0a0a; }
   50% { transform: rotate(1.6deg) scale(1.025); }
 }
 
-.band { left: 50%; width: min(820px, 56vw); aspect-ratio: 1024 / 210; margin-left: calc(min(820px, 56vw) / -2); }
+.band { --thorn-mask: url("assets/thorns-h.png"); left: 50%; width: min(780px, 54vw); aspect-ratio: 1024 / 210; margin-left: calc(min(780px, 54vw) / -2); }
 .band img { object-position: 50% 51%; }
 .band.top { top: -1.5%; }
 .band.bottom { bottom: -1.5%; }
-.band.mid { top: 50%; transform: translateY(-50%); width: 130vw; margin-left: -65vw; }
-.band.bottom img { transform: scaleY(-1); object-position: 50% 49%; }
+
+.band.bottom img, .band.bottom .glint { transform: scaleY(-1); }
+.band.bottom img { object-position: 50% 49%; }
 .band .float { animation: drift 11s ease-in-out infinite; }
+.band.top .float {
+  -webkit-mask: linear-gradient(90deg, #000 0 30%, transparent 34% 66%, #000 70% 100%);
+  mask: linear-gradient(90deg, #000 0 30%, transparent 34% 66%, #000 70% 100%);
+}
 .band.bottom .float { animation-delay: -5s; }
 .band.top .glint { animation-delay: .6s; animation-duration: 6.5s; }
 .band.bottom .glint { animation-delay: 3.2s; animation-duration: 6.5s; }
+
+
 
 .side { top: 50%; height: min(820px, 56vw); width: min(820px, 56vw); aspect-ratio: 1024 / 210; margin-top: calc(min(820px, 56vw) / -2); transform-origin: center center; }
 .side img { object-position: 50% 51%; transform: rotate(90deg); }
@@ -180,7 +209,7 @@ html, body { background: var(--page-bg); color: #0a0a0a; }
 }
 @media (max-width: 720px) {
   .band { width: 92vw; margin-left: -46vw; }
-  .corner { width: 46vw; }
+  .corner { width: 26vw; }
   .side { height: 92vw; width: 92vw; margin-top: -46vw; }
 }
 
@@ -206,8 +235,11 @@ html, body { background: var(--page-bg); color: #0a0a0a; }
 
 /* ---------- HERO CONTENT ---------- */
 .y2k-hero .hero-content {
-  position: relative; z-index: 2; padding: 96px 20px; margin: 0 auto;
+  position: relative; z-index: 2;
+  padding: clamp(120px, 16svh, 170px) 20px clamp(100px, 13svh, 140px);
+  margin: 0 auto;
   display: flex; flex-direction: column; align-items: center; max-width: 1100px;
+  width: 100%; text-align: center;
 }
 .y2k-hero .kicker {
   margin: 0 0 18px; color: #000; font-weight: 700; font-size: 11px; letter-spacing: .42em;
@@ -217,6 +249,7 @@ html, body { background: var(--page-bg); color: #0a0a0a; }
   margin: 0; font-family: var(--font-x); font-weight: 900; color: #000;
   font-size: clamp(54px, 11.2vw, 178px); line-height: .84; letter-spacing: -.045em;
   display: flex; flex-direction: column; align-items: center;
+  width: max-content; max-width: 100%; position: relative; z-index: 2;
 }
 .y2k-title .line { display: block; white-space: nowrap; perspective: 700px; }
 .y2k-title .ch { display: inline-block; will-change: transform, filter; }
@@ -376,35 +409,40 @@ html, body { background: var(--page-bg); color: #0a0a0a; }
 
 /* ---------- HERO MOBILE (max-width: 768px) ---------- */
 @media (max-width: 768px) {
-  .y2k-hero { overflow-x: hidden; }
-  .crown, .thorn.band.top { display: none; }
+  .y2k-hero {
+    min-height: max(680px, calc(100svh - 100px));
+    overflow: hidden;
+  }
+  body::before { background-size: 100% clamp(140px, 22vh, 190px); opacity: .14; }
+  .hero-metal { opacity: .48; }
+  .hero-crown { top: 3%; width: clamp(96px, 23vw, 150px); }
   .y2k-grain { inset: 0; }
-  .y2k-mark { width: min(88vw, 360px); opacity: .05; }
+  .y2k-mark { width: min(88vw, 360px); opacity: .17; animation: mark-float 12s ease-in-out infinite; }
 
-  /* Marcos cromados mas contenidos */
-  .corner { width: 40vw; }
-  .band { width: 80vw; margin-left: -40vw; }
+  /* Mismos marcos que desktop, escalados para no salirse de la pantalla. */
+  .corner { width: 32vw; }
+  .band { width: 88vw; margin-left: -44vw; }
   .side { height: 80vw; width: 80vw; margin-top: -40vw; }
 
   .y2k-hero .hero-content {
-    padding: 64px 16px 56px;
+    padding: clamp(128px, 18svh, 152px) 16px clamp(108px, 15svh, 128px);
     align-items: center;
     text-align: center;
   }
   .y2k-hero .kicker {
-    font-size: 10px; letter-spacing: .28em; margin-bottom: 12px;
-    white-space: nowrap;
+    font-size: 10px; letter-spacing: .28em; margin-bottom: 16px;
+    white-space: normal; max-width: 34ch;
   }
   .y2k-title {
     font-size: clamp(38px, 12vw, 64px);
     line-height: .92;
   }
-  .y2k-title .line { white-space: normal; }
+  .y2k-title .line { white-space: nowrap; }
   .y2k-sub {
-    font-size: 12px; margin: 16px 0 22px; max-width: 32ch;
+    font-size: 12px; margin: 20px 0 28px; max-width: 32ch;
   }
   .y2k-ctas {
-    flex-direction: column; width: 100%; max-width: 300px; gap: 10px;
+    flex-direction: column; width: 100%; max-width: 310px; gap: 14px;
   }
   .y2k-ctas .btn-chrome,
   .y2k-ctas .btn-ghost {

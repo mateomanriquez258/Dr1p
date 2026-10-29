@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "nombre": "Remera Chrome_Heart (M-XL)",
+    "nombre": "Remera Chrome Heart Oversize (M-XL)",
     "marca": "Chrome Heart",
     "talles": [
       "M",
@@ -21,7 +21,7 @@
   },
   {
     "id": 2,
-    "nombre": "Remera Bathing_Ape (M-XL)",
+    "nombre": "Remera Bathing Ape Oversize (M-XL)",
     "marca": "Bathing Ape",
     "talles": [
       "M",
@@ -42,7 +42,7 @@
   },
   {
     "id": 3,
-    "nombre": "Remera Corteiz boxyfit (M-XL)",
+    "nombre": "Remera Corteiz Oversize (M-XL)",
     "marca": "Corteiz",
     "talles": [
       "M",
@@ -53,15 +53,16 @@
     "precio_base": 24992,
     "stock": 5,
     "categoria": "remeras",
-    "imagen": "assets/corteiz/conjunto corteiz.webp",
+    "imagen": "assets/corteiz/remera frente corteiz negra.webp",
     "imagenes": [
-      "assets/corteiz/conjunto corteiz.webp",
-      "assets/corteiz/remera dorso corteiz negra.webp"
+      "assets/corteiz/remera frente corteiz negra.webp",
+      "assets/corteiz/remera dorso corteiz negra.webp",
+      "assets/corteiz/conjunto corteiz.webp"
     ]
   },
   {
     "id": 4,
-    "nombre": "Remera Vans blanca (M-XL)",
+    "nombre": "Remera Vans blanca Oversize (M-XL)",
     "marca": "Vans",
     "talles": [
       "M",
@@ -80,7 +81,7 @@
   },
   {
     "id": 5,
-    "nombre": "Remera Vans negra (M-XL)",
+    "nombre": "Remera Vans negra Oversize (M-XL)",
     "marca": "Vans",
     "talles": [
       "M",

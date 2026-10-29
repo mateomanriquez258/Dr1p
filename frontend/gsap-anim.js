@@ -7,6 +7,7 @@
   "use strict";
 
   if (typeof gsap === "undefined") return; // GSAP no cargó: no hacer nada
+  if (typeof ScrollTrigger !== "undefined") gsap.registerPlugin(ScrollTrigger);
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -39,6 +40,7 @@
   // ---- 3. Marquesina: acelera con el scroll, vuelve al ritmo ----
   // Usa ScrollTrigger velocity para modular la duración de la animación CSS.
   function marqueeScrollSpeed() {
+    if (typeof ScrollTrigger === "undefined") return;
     const marquee = document.getElementById("marquee");
     if (!marquee) return;
     const track = marquee.querySelector(".marquee-track");
@@ -60,6 +62,7 @@
   // ---- 4. Parallax suave del logo gótico del hero ----
   // ScrollTrigger scrub, liviano en celular (solo transform).
   function markParallax() {
+    if (typeof ScrollTrigger === "undefined") return;
     const mark = document.querySelector(".y2k-mark");
     if (!mark) return;
     const hero = document.querySelector(".y2k-hero");
@@ -77,27 +80,16 @@
     });
   }
 
-  // ---- 5. Flip al filtrar el catálogo (opcional) ----
-  // Requiere Flip plugin. Si no está disponible, se omite.
-  function flipOnFilter() {
-    if (typeof Flip === "undefined") return; // Flip no disponible, omitir
+  // ---- 5. Entrada sutil al actualizar el catálogo ----
+  function filterGridFeedback() {
     const grid = document.getElementById("productos");
     if (!grid) return;
-    // MutationObserver para detectar cambios en la grilla
     const obs = new MutationObserver(() => {
-      const cards = grid.querySelectorAll(".card");
-      if (!cards.length) return;
-      // Capturar estado anterior
-      const state = Flip.getState(cards);
-      // (El re-render ya ocurrió, así que simplemente animar desde el estado capturado)
-      Flip.from(state, {
-        duration: 0.5,
-        ease: "power3.out",
-        stagger: 0.04,
-        absolute: true,
-        onEnter: elements => gsap.fromTo(elements, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.4 }),
-        onLeave: elements => gsap.to(elements, { opacity: 0, scale: 0.9, duration: 0.3 })
-      });
+      if (!grid.querySelector(".card")) return;
+      gsap.fromTo(grid,
+        { autoAlpha: 0.88, y: 10 },
+        { autoAlpha: 1, y: 0, duration: 0.32, ease: "power3.out", overwrite: "auto" }
+      );
     });
     obs.observe(grid, { childList: true });
   }
@@ -105,18 +97,14 @@
   // ---- Inicialización ----
   // Solo animar si no hay prefers-reduced-motion
   if (!reduced) {
-    // matchMedia para responsive: solo parallax en desktop
-    const mm = gsap.matchMedia();
+    // Scroll-linked animations only run when ScrollTrigger loaded correctly.
+    if (typeof ScrollTrigger !== "undefined") {
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 768px)", markParallax);
+      marqueeScrollSpeed();
+    }
 
-    mm.add("(min-width: 768px)", function () {
-      markParallax();
-    });
-
-    // Marquesina: solo si el elemento existe
-    marqueeScrollSpeed();
-
-    // Flip: solo si Flip está disponible
-    flipOnFilter();
+    filterGridFeedback();
 
     // Escuchar eventos personalizados de app.js
     document.addEventListener("dr1p:cart-add", cartPulse);

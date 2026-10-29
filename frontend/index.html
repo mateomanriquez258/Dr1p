@@ -24,11 +24,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Zalando+Sans+Expanded:wght@400;700;900&family=Zalando+Sans:wght@400;700&family=Space+Mono:wght@400;700&family=Anton&display=swap" rel="stylesheet">
 <link rel="preload" as="image" href="assets/thorns-corner.png">
 <link rel="preload" as="image" href="assets/thorns-h.png">
+<link rel="preload" as="image" href="assets/linea.png">
 <!-- GSAP & ScrollTrigger -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<!-- GSAP Flip (reacomodo suave al filtrar el catálogo) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Flip.min.js"></script>
 <!-- Three.js (WebGL) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -68,19 +67,19 @@
   <section class="hero y2k-hero" id="hero">
     <div class="y2k-grain" aria-hidden="true"></div>
     <img class="y2k-mark" src="assets/logo.png" alt="" aria-hidden="true">
+    <div class="hero-metal" aria-hidden="true"></div>
 
-    <!-- Guirnaldas de espinas cromadas (bordes del viewport) -->
+    <!-- Guirnaldas de espinas cromadas (solo bordes) -->
     <div class="thorns" aria-hidden="true">
       <div class="thorn chrome corner tl" data-depth="14"><div class="float"><img src="assets/thorns-corner.png" alt=""><i class="glint"></i></div></div>
       <div class="thorn chrome corner tr" data-depth="18"><div class="float"><img src="assets/thorns-corner.png" alt=""><i class="glint"></i></div></div>
       <div class="thorn chrome corner bl" data-depth="10"><div class="float"><img src="assets/thorns-corner.png" alt=""><i class="glint"></i></div></div>
       <div class="thorn chrome corner br" data-depth="16"><div class="float"><img src="assets/thorns-corner.png" alt=""><i class="glint"></i></div></div>
-      <div class="thorn chrome crown top" data-depth="8"><div class="float"><img src="assets/corona.png" alt=""><i class="glint"></i></div></div>
-      <div class="thorn chrome band bottom" data-depth="6"><div class="float"><img src="assets/thorns-h.png" alt=""><i class="glint"></i></div></div>
-      <div class="thorn chrome side left" data-depth="12"><div class="float"><img src="assets/thorns-h.png" alt=""><i class="glint"></i></div></div>
-      <div class="thorn chrome side right" data-depth="12"><div class="float"><img src="assets/thorns-h.png" alt=""><i class="glint"></i></div></div>
-      <div class="thorn chrome band mid" data-depth="8"><div class="float"><img src="assets/linea.png" alt=""><i class="glint"></i></div></div>
+      <div class="thorn chrome band top" data-depth="8"><div class="float"><img src="assets/thorns-h.png" alt=""><i class="glint"></i></div></div>
+      <div class="thorn chrome band bottom" data-depth="8"><div class="float"><img src="assets/thorns-h.png" alt=""><i class="glint"></i></div></div>
     </div>
+
+    <img class="hero-crown" src="assets/corona-cutout.png" alt="" aria-hidden="true">
 
     <div class="hero-content">
       <p class="kicker" data-reveal>SS 26 <b>//</b> STOCK LIMITADO <b>//</b> PRENDAS EXCLUSIVAS</p>
@@ -189,11 +188,14 @@
 
   <!-- ===== VISTA INDIVIDUAL DE PRODUCTO (ruta ?prod=ID) ===== -->
   <section id="producto" class="section zone-mid" style="display:none">
-    <button class="btn-volver" onclick="Router.volver()">← VOLVER</button>
+    <div class="pd-toolbar">
+      <button class="btn-volver" onclick="Router.volver()">← VOLVER</button>
+      <span class="free-tag">Envío gratis en compras a partir de $120.000</span>
+    </div>
     <div class="pd-layout">
       <div class="pd-gallery">
-        <span class="free-tag">Envío gratis en compras a partir de $120.000</span>
-        <img id="pd-img" src="" alt="Producto">
+        <img id="pd-img" src="" alt="Producto" role="button" tabindex="0" aria-label="Ampliar foto del producto" onclick="abrirZoomProducto()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();abrirZoomProducto()}">
+        <button type="button" class="pd-zoom-trigger" onclick="abrirZoomProducto()">⌕ AMPLIAR FOTO</button>
         <div id="pd-thumbs" class="pd-thumbs"></div>
       </div>
       <div class="pd-info">
@@ -231,6 +233,11 @@
     <p class="idx">[ SIMILARES // SEGUÍ EXPLORANDO ]</p>
     <div id="pd-similares" class="grid"></div>
   </section>
+
+  <dialog id="pd-zoom" class="pd-zoom" aria-label="Foto ampliada del producto" onclick="if(event.target===this) cerrarZoomProducto()">
+    <button type="button" class="pd-zoom-close" onclick="cerrarZoomProducto()" aria-label="Cerrar foto ampliada">✕</button>
+    <img id="pd-zoom-img" src="" alt="">
+  </dialog>
 
   <!-- ===== [04] PROBATE (gris claro) ===== -->
   <section id="probarte" class="section zone-light">

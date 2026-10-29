@@ -295,7 +295,7 @@ function cambiar(i, d) {
 let pdId = null, pdCant = 1;
 
 const DESC_CAT = {
-  remeras: "calce oversize que cae perfecto",
+  remeras: "calce amplio y cómodo, ideal para un look relajado",
   pantalones: "calce baggy cómodo para todos los días",
   gorras: "ajuste fitted que se adapta a tu cabeza"
 };
@@ -374,6 +374,24 @@ function pdFoto(i) {
     t.classList.toggle("sel", j === i));
 }
 
+function abrirZoomProducto() {
+  const imagen = document.getElementById("pd-img");
+  const dialogo = document.getElementById("pd-zoom");
+  const ampliada = document.getElementById("pd-zoom-img");
+  if (!imagen || !dialogo || !ampliada || dialogo.open) return;
+  ampliada.src = imagen.src;
+  ampliada.alt = imagen.alt ? `Foto ampliada: ${imagen.alt}` : "Foto ampliada del producto";
+  if (typeof dialogo.showModal === "function") dialogo.showModal();
+  else dialogo.setAttribute("open", "");
+}
+
+function cerrarZoomProducto() {
+  const dialogo = document.getElementById("pd-zoom");
+  if (!dialogo) return;
+  if (typeof dialogo.close === "function" && dialogo.open) dialogo.close();
+  else dialogo.removeAttribute("open");
+}
+
 function pdQty(d) {
   const p = PRODUCTOS.find(x => x.id == pdId);
   if (!p) return;
@@ -426,29 +444,33 @@ const CUPON_TXT = {
   "B": "✓ Cupón $5.000 aplicado"
 };
 
-// REGLA: 1 solo cupón por carrito. Aplicar uno nuevo REEMPLAZA al anterior,
-// nunca se suman. Input vacío + Aplicar (o botón ✕) quita el cupón.
+// REGLA: 1 solo cupón por carrito. Para usar otro, primero hay que quitar el actual.
 async function aplicarCupon() {
   const input = document.getElementById("cupon");
   const msg = document.getElementById("cupon-msg");
   const codigo = (input.value || "").trim().toUpperCase();
   if (!codigo) { quitarCupon(); return; }
   const previo = cuponAplicado ? cuponAplicado.codigo : null;
+  if (previo && previo !== codigo) {
+    msg.style.display = "block";
+    msg.textContent = "Ya hay un cupón en este carrito. Quitalo antes de aplicar otro.";
+    mostrarCarrito();
+    return;
+  }
   try {
     const r = await fetch("/api/validar-cupon?codigo=" + encodeURIComponent(codigo));
+    if (!r.ok) throw new Error("No se pudo consultar la API de cupones");
     const data = await r.json();
     if (data.ok) {
-      cuponAplicado = { codigo, premio: data.premio }; // reemplazo, no suma
+      cuponAplicado = { codigo, premio: data.premio };
       msg.style.display = "block";
-      msg.textContent = (CUPON_TXT[data.premio] || "✓ Cupón aplicado") +
-        (previo && previo !== codigo ? " (reemplaza a " + previo + ")" : "");
+      msg.textContent = CUPON_TXT[data.premio] || "✓ Cupón aplicado";
     } else {
-      cuponAplicado = null;
+      if (previo === codigo) cuponAplicado = null;
       msg.style.display = "block";
       msg.textContent = data.motivo === "usado" ? "✕ Cupón ya usado" : "✕ Cupón inválido";
     }
   } catch {
-    cuponAplicado = null;
     msg.style.display = "block";
     msg.textContent = "✕ No se pudo validar el cupón";
   }
@@ -515,8 +537,7 @@ async function enviarWhatsApp() {
   const nombre = document.getElementById("nombre").value || "Sin nombre";
   const sub = total(), desc = descuento(), tot = totalFinal();
 
-  // Registro del pedido en el servidor. Si no hay servidor (sitio estático: 404/405/501
-  // o red caída) NO se bloquea la venta: el pedido igual sale por WhatsApp.
+  // Los pedidos con descuento solo se envían si el servidor pudo consumir el cupón.
   const SIN_API = [404, 405, 501];
   try {
     const r = await fetch("/api/pedidos", {
@@ -531,14 +552,27 @@ async function enviarWhatsApp() {
         cupon: cuponAplicado // el servidor revalida y recalcula (no confía en estos totales)
       }),
     });
-    if (!r.ok && SIN_API.indexOf(r.status) < 0) {
-      // Cupón inválido/usado al momento del pedido → se limpia y no se envía
-      cuponAplicado = null;
-      mostrarCarrito();
-      alert("El cupón ya no es válido (usado o inexistente). Se quitó del pedido.");
-      return;
+    if (!r.ok) {
+      if (cuponAplicado) {
+        if (r.status === 400) {
+          cuponAplicado = null;
+          mostrarCarrito();
+          alert("El cupón ya no es válido o ya fue usado. Se quitó del carrito.");
+        } else {
+          alert("No se pudo confirmar el cupón con el servidor. El pedido no se envió; intentá de nuevo cuando la tienda esté conectada.");
+        }
+        return;
+      }
+      if (!SIN_API.includes(r.status)) {
+        alert("No se pudo registrar el pedido. Revisá la conexión e intentá de nuevo.");
+        return;
+      }
     }
   } catch (e) {
+    if (cuponAplicado) {
+      alert("No se pudo confirmar el cupón con el servidor. El pedido no se envió; intentá de nuevo cuando la tienda esté conectada.");
+      return;
+    }
     console.warn("Pedido sin registrar (sin servidor):", e);
   }
 
