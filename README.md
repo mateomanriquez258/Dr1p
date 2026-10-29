@@ -1,20 +1,17 @@
-# DR1P STORE — Tienda online con checkout por WhatsApp
+DR1P STORE — Tienda online con checkout por WhatsApp
 
 ## Desarrollo local
-Doble click en `iniciar-tienda.bat` o:
+Doble click en `iniciar-tienda.bat` o ejecutá:
 ```
 node backend/server.js
 ```
-Abrir `http://localhost:3000`.
+Luego abrí `http://localhost:3000`.
 
-## Deploy en Render (gratis)
-1. Subir este proyecto al repo https://github.com/mateomanriquez258/Dr1p.git
-   (respetar el `.gitignore`: no subir datos de clientes).
-2. En [render.com](https://render.com) → New → Blueprint → seleccionar el repo.
-   El `render.yaml` configura todo solo (plan free, `npm start`).
-3. Cada `push` a GitHub redespliega automáticamente con la misma URL.
+## Deploy en Vercel
+1. Subí el proyecto al repo https://github.com/mateomanriquez258/Dr1p.git
+   (respetá el `.gitignore`: no subas datos de clientes).
+2. En [vercel.com](https://vercel.com), importá ese repositorio como proyecto.
+3. Dejá la configuración de salida en `frontend`, como indica `vercel.json`, y desplegá.
+4. Cada `push` a GitHub volverá a desplegar el sitio automáticamente.
 
-> Nota plan free: la instancia "duerme" tras inactividad (tarda ~30s en
-> despertar) y los JSON (`pedidos`/`leads`/`contactos`) se reinician si el
-> servicio se recrea. Para persistencia real, agregar un Disk (de pago)
-> o migrar a base de datos externa.
+> Este deploy publica el frontend estático. Vercel no ejecuta `backend/server.js` como servidor persistente; si la tienda necesita guardar pedidos, leads o contactos, hay que adaptar esas rutas a Vercel Functions y usar una base de datos externa. Los archivos JSON locales no sirven como almacenamiento persistente en producción.
