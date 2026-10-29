@@ -1,0 +1,21 @@
+# Dependencias
+node_modules/
+.vercel/
+
+# Datos de clientes y operación (se generan en el servidor, NO se suben)
+backend/pedidos.json
+backend/leads.json
+backend/giros.json
+backend/contactos.json
+/pedidos.json
+/leads.json
+/contactos.json
+
+# Entorno y sistema
+.env
+.DS_Store
+Thumbs.db
+*.log
+
+.vercel
+.env*

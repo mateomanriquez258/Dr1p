@@ -20,10 +20,6 @@
   // ---- 1. Configuración ----
   var SEGMENTOS = 6;
   var GRADOS_SEG = 360 / SEGMENTOS;
-  // Pesos brutos para sorteo ponderado (total 140 → se normaliza al 100%):
-  // 10% OFF=40 | PRÓXIMA=5 | 15% OFF=35 | SEGUÍ=5 | 20% OFF=20 | $5000=40
-  var PESOS = [40, 5, 35, 5, 20, 40]; // índice 0..5
-  var PESO_TOTAL = PESOS.reduce((a, b) => a + b, 0); // 145 (se normaliza al 100% internamente)
   // Mapa de segmentos (debe coincidir con el conic-gradient del CSS):
   // 0:10% gana | 1:PRÓXIMA deco | 2:15% gana | 3:SEGUÍ deco | 4:20% gana | 5:$5000 gana
   var PREMIOS = [
@@ -150,36 +146,6 @@
     }
   }
 
-  // ---- 6. Sorteo ponderado: elige ganador ANTES de animar ----
-  // Selecciona un segmento 0..5 con probabilidad proporcional a PESOS[].
-  // Normaliza internamente para que la suma refleje exactamente las proporciones pedidas.
-  function elegirPremio() {
-    const r = Math.random() * PESO_TOTAL;
-    let acumulado = 0;
-    for (let i = 0; i < PESOS.length; i++) {
-      acumulado += PESOS[i];
-      if (r < acumulado) {
-        const base = PREMIOS[i];
-        return {
-          tipo: base.tipo,
-          indice: i,
-          titulo: base.titulo,
-          gana: base.tipo !== "NONE",
-          cupon: null
-        };
-      }
-    }
-    // Fallback de seguridad (nunca debería llegar acá)
-    const base = PREMIOS[PESOS.length - 1];
-    return {
-      tipo: base.tipo,
-      indice: PESOS.length - 1,
-      titulo: base.titulo,
-      gana: base.tipo !== "NONE",
-      cupon: null
-    };
-  }
-
   // ---- 7. Grados exactos de parada (flecha fija arriba = 0°) ----
   function gradosDeParada(indice) {
     var centro = indice * GRADOS_SEG + GRADOS_SEG / 2;
@@ -195,50 +161,73 @@
     if (!emailValido(emailInput.value)) { validarEnVivo(); return; }
     girando = true;
     btnSpin.disabled = true;
+    errorMsg.textContent = "";
+    guardarLead(emailInput.value.trim()).then(function (resultado) {
+      if (!resultado.ok) {
+        girando = false;
+        if (resultado.cooldown) {
+          guardarCooldown(resultado.reintentarEn);
+          vistaCooldown();
+          return;
+        }
+        validarEnVivo();
+        errorMsg.textContent = "No se pudo confirmar el giro. Revisá tu conexión e intentá de nuevo.";
+        return;
+      }
 
-    premioActual = elegirPremio();
-    var destino = gradosDeParada(premioActual.indice);
-    rotacionAcumulada = destino;
-    wheel.style.transform = "rotate(" + destino + "deg)";
-
-    leadCupon = null;
-    Promise.all([
-      new Promise(function (resolve) { setTimeout(resolve, DURACION_MS + 150); }),
-      guardarLead(emailInput.value.trim(), premioActual)
-    ]).then(function (resultados) { mostrarVictoria(resultados[1]); });
+      var data = resultado.data;
+      premioActual = PREMIOS[data.segmento];
+      if (!premioActual || premioActual.tipo !== data.premio) {
+        girando = false;
+        validarEnVivo();
+        errorMsg.textContent = "No se pudo confirmar el premio. Intentá de nuevo.";
+        return;
+      }
+      premioActual = Object.assign({}, premioActual, { indice: data.segmento, gana: data.premio !== "NONE", cupon: data.cupon || null });
+      leadCupon = data.cupon || null;
+      var destino = gradosDeParada(premioActual.indice);
+      rotacionAcumulada = destino;
+      wheel.style.transform = "rotate(" + destino + "deg)";
+      setTimeout(function () { mostrarVictoria({ ok: true, data: data }); }, DURACION_MS + 150);
+    });
   }
 
-  // ---- 9. Guardar lead (backend + Formspree, background) ----
-  function guardarLead(email, premio) {
+  // ---- 8. Pedir al servidor el premio y luego guardar en Formspree ----
+  function guardarLead(email) {
     var p = fetch("/api/leads", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email, premio: premio.tipo, cupon: "-" })
+      body: JSON.stringify({ email: email })
     }).then(function (r) {
       return r.json().catch(function () { return null; }).then(function (d) {
-        if (!r.ok || !d || !d.ok || (premio.gana && !d.cupon)) return { ok: false };
-        var premioConfirmado = PREMIOS.find(function (item) { return item.tipo === d.premio; });
-        if (premio.gana && premioConfirmado) {
-          premio.tipo = premioConfirmado.tipo;
-          premio.titulo = premioConfirmado.titulo;
+        if (r.status === 429 && d && d.error === "cooldown") {
+          return { ok: false, cooldown: true, reintentarEn: d.reintentarEn };
         }
-        leadCupon = d.cupon || null;
-        return { ok: true };
+        if (!r.ok || !d || !d.ok || !Number.isInteger(d.segmento) || !PREMIOS[d.segmento] || PREMIOS[d.segmento].tipo !== d.premio || (d.premio !== "NONE" && !d.cupon)) return { ok: false };
+        if (!d.repetido) {
+          fetch(FORMSPREE_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({
+              email: email,
+              premio: PREMIOS[d.segmento].titulo,
+              _subject: "Nuevo lead ruleta DR1P"
+            })
+          }).catch(function () {});
+        }
+        return { ok: true, data: d };
       });
     }).catch(function () { return { ok: false }; });
-    fetch(FORMSPREE_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify({
-        email: email,
-        premio: premio.titulo,
-        _subject: "Nuevo lead ruleta DR1P"
-      })
-    }).catch(function () {});
     return p;
   }
 
-  // ---- 10. Pantalla de victoria (según premio sorteado) ----
+  function guardarCooldown(reintentarEn) {
+    var siguienteGiro = Date.parse(reintentarEn || "");
+    if (!Number.isFinite(siguienteGiro)) siguienteGiro = Date.now() + MS_24H;
+    try { localStorage.setItem(LS_TS, String(siguienteGiro - MS_24H)); } catch (e) {}
+  }
+
+  // ---- 9. Pantalla de victoria (según premio confirmado por el servidor) ----
   function mostrarVictoria(resultado) {
     girando = false;
     formBox.style.display = "none";
@@ -258,7 +247,8 @@
       return;
     }
 
-    try { localStorage.setItem(LS_TS, String(Date.now())); } catch (e) {} // arranca las 24hs
+    var data = resultado.data;
+    guardarCooldown(data.reintentarEn);
     if (leadCupon) premioActual.cupon = leadCupon;
     $("spin-title").textContent = premioActual.gana ? "¡Felicitaciones!" : "Ruleta en pausa";
     $("spin-sub").textContent = premioActual.gana ? "Ganaste:" : "Esta vez no hubo premio.";
@@ -266,8 +256,8 @@
     $("win-coupon").textContent = leadCupon || "";
     $("win-info").textContent = premioActual.gana
       ? (premioActual.tipo === "5000"
-        ? "Copiá el código y pegalo en el campo CUPÓN del carrito antes de finalizar por WhatsApp. Se descuentan $5.000 del total."
-        : "Copiá el código y pegalo en el campo CUPÓN del carrito antes de finalizar por WhatsApp. Se descuenta el % del total.")
+        ? "Código válido por 24 horas. Copialo y pegalo en CUPÓN antes de finalizar por WhatsApp; se descuentan $5.000."
+        : "Código válido por 24 horas. Copialo y pegalo en CUPÓN antes de finalizar por WhatsApp; se descuenta el porcentaje ganado.")
       : "";
     if (!premioActual.gana) $("btn-copy").style.display = "none";
     winBox.classList.add("show");

@@ -468,7 +468,9 @@ async function aplicarCupon() {
     } else {
       if (previo === codigo) cuponAplicado = null;
       msg.style.display = "block";
-      msg.textContent = data.motivo === "usado" ? "✕ Cupón ya usado" : "✕ Cupón inválido";
+      msg.textContent = data.motivo === "usado" ? "✕ Cupón ya usado"
+        : data.motivo === "expirado" ? "✕ Cupón vencido (24 horas)"
+          : "✕ Cupón inválido";
     }
   } catch {
     msg.style.display = "block";

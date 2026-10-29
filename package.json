@@ -6,6 +6,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "start": "node backend/server.js"
+    "start": "node backend/server.js",
+    "migrate:coupons": "node backend/migrate-leads-to-supabase.js"
   }
 }
